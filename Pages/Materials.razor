@@ -1,0 +1,138 @@
+@page "/materials"
+@inject IMaterialService materialService
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+
+<h2>Materials</h2>
+
+<hr />
+
+<div>
+    <RadzenButton Click="@AddButtonClicked" Text="Add New Material" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+</div>
+
+<br/>
+
+<RadzenDataGrid @ref="materialsGrid" AllowFiltering="true" AllowPaging="true" PageSize="10" AllowSorting="true" EditMode="DataGridEditMode.Single" 
+                SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedMaterial GridLines="Radzen.DataGridGridLines.Horizontal"
+                Data="@materials" TItem="Material" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset">
+    <Columns>
+        <RadzenDataGridColumn TItem="Material" Property="MaterialID" Filterable="false" Title="ID" Frozen="true" Width="40px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="Material" Property="Name" Title="Material Name" Frozen="true" Width="125px">
+            <EditTemplate Context="material">
+                <RadzenTextBox @bind-Value="material.Name" Style="width:100%; display: block" Name="MaterialName" />
+                <RadzenRequiredValidator Text="Material Name is required" Component="MaterialName" Popup="true" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Material" Property="Type" Title="Type" Frozen="true" Width="125px">
+            <EditTemplate Context="material">
+                <RadzenTextBox @bind-Value="material.Type" Style="width:100%; display: block" Name="MaterialType" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Material" Property="CubicFootWeight" Title="Cubic Foot Weight" Frozen="true" Width="100px">
+            <EditTemplate Context="material">
+                <RadzenNumeric @bind-Value="material.CubicFootWeight" Style="width:100%; display: block" Name="CubicFootWeight" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Material" Property="Notes1" Title="Notes 1" Frozen="true" Width="160px">
+            <EditTemplate Context="material">
+                <RadzenTextBox @bind-Value="material.Notes1" Style="width:100%; display: block" Name="Notes1" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Material" Property="Notes2" Title="Notes 2" Frozen="true" Width="160px">
+            <EditTemplate Context="material">
+                <RadzenTextBox @bind-Value="material.Notes2" Style="width:100%; display: block" Name="Notes2" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Material" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
+            <Template Context="material">
+                <RadzenButton Icon="calculate" ButtonStyle="Radzen.ButtonStyle.Info" Size="Radzen.ButtonSize.Small" Click="@((args) => AddMaterialReceived(material))" Text="" />
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Material" Context="material" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
+            <Template Context="material">
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Small" Click="@(args => EditRow(material))" @onclick:stopPropagation="true" />
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Small" Class="my-1 ms-1" Click="@(args => DeleteRow(material.MaterialID))" @onclick:stopPropagation="true" />
+            </Template>
+            <EditTemplate Context="material">
+                <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Small" Click="@((args) => SaveRow(material))" />
+                <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Small" Class="my-1 ms-1" Click="@((args) => CancelEdit(material))" />
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Small" Class="my-1 ms-1" Click="@(args => DeleteRow(material.MaterialID))" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    RadzenDataGrid<Material>? materialsGrid;
+    IList<Material>? materials;
+    IList<Material>? selectedMaterial;
+    Material? materialToInsert;
+    Material? materialToUpdate;
+
+    void Reset()
+    {
+        materialToInsert = null;
+        materialToUpdate = null;
+    }
+
+    void AddButtonClicked()
+    {
+        navigationManager.NavigateTo("/AddMaterial");
+    }
+
+    void AddMaterialReceived(Material material)
+    {
+        navigationManager.NavigateTo("/AddMaterialReceived");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        materials = await materialService.ListAll();
+    }
+
+    void OnUpdateRow(Material material)
+    {
+        if (material == materialToInsert)
+        {
+            materialToInsert = null;
+        }
+
+        materialToUpdate = null;
+
+        materialService.Update(material);
+    }
+
+    async Task SaveRow(Material material)
+    {
+        await materialsGrid.UpdateRow(material);
+    }
+
+    protected async Task EditRow(Material material)
+    {
+        materialToUpdate = material;
+        await materialsGrid.EditRow(material);
+    }
+
+    protected async Task DeleteRow(int id)
+    {
+        await materialService.Delete(id);
+        materials = await materialService.ListAll();
+    }
+
+    void CancelEdit(Material material)
+    {
+        if (material == materialToInsert)
+        {
+            materialToInsert = null;
+        }
+
+        materialToUpdate = null;
+
+        materialsGrid.CancelEditRow(material);
+    }
+
+    void OnCreateRow(Material material)
+    {
+        materialService.Create(material);
+    }
+}

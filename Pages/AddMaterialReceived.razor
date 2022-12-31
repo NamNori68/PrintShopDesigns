@@ -1,0 +1,48 @@
+﻿@page "/addMaterialreceived"
+@inject IMaterialReceivedService materialReceivedService
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+
+<h2>Add Material Received</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <form>
+            <div class="form-group">
+                <RadzenLabel Text="Material Name" Component="@materialReceived.Name" />
+                <RadzenTextBox @bind-Value="materialReceived.Name" Style="width:100%; display: block" Name="Name" />
+                <RadzenLabel Text="Type" Component="@materialReceived.Type" />
+                <RadzenTextBox @bind-Value="materialReceived.Type" Style="width:100%; display: block" Name="Type" />
+                <RadzenLabel Text="Notes" Component="@materialReceived.KingLot" />
+                <RadzenTextBox @bind-Value="materialReceived.KingLot" Style="width:100%; display: block" Name="KingLot" />
+                <RadzenLabel Text="Notes" Component="@materialReceived.VendorLot" />
+                <RadzenTextBox @bind-Value="materialReceived.VendorLot" Style="width:100%; display: block" Name="VendorLot" />
+                <RadzenLabel Text="Quantity" />
+                <RadzenNumeric TValue="Int16" Format="0" ShowUpDown="false" @bind-Value="materialReceived.Quantity" Style="width:100%; display: block" Name="Quantity" />
+                <RadzenLabel Text="Cost per Pound" />
+                <RadzenNumeric TValue="decimal" Format="0.00" ShowUpDown="false" @bind-Value="materialReceived.CostLb" Style="width:100%; display: block" Name="CostLb" />
+                <RadzenLabel Text="Notes 2" Component="@materialReceived.Notes" />
+                <RadzenTextBox @bind-Value="materialReceived.Notes" Style="width:100%; display: block" Name="Notes" />
+            </div>
+            <br />
+            <div class="form-group">
+                <RadzenButton Click="@CreateMaterial" Text="Save" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+                <RadzenButton Click="@cancel" Text="Cancel" Icon="add_circle_outline" ButtonStyle="Radzen.ButtonStyle.Warning"></RadzenButton>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    MaterialReceived materialReceived = new MaterialReceived();
+
+    protected async Task CreateMaterial()
+    {
+        await materialReceivedService.Create(materialReceived);
+        navigationManager.NavigateTo("MaterialsReceived");
+    }
+
+    void cancel()
+    {
+        navigationManager.NavigateTo("/MaterialsReceived");
+    }
+}

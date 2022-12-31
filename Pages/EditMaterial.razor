@@ -1,0 +1,60 @@
+﻿@page "/editMaterial/{id:int}"
+@inject IMaterialService materialService
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+
+<h2>Edit Material</h2>
+
+<div class="row">
+   <div class="col-md-4">
+      <form>
+         <div class="form-group">
+            <label for="Name" class="control-label">Name</label>
+            <input for="Name" class="form-control"
+               @bind-value="@material.Name" />
+            <label for="Type" class="control-label">Type</label>
+            <input for="Type" class="form-control"
+               @bind-value="@material.Type" />
+            <label for="CubicFootWeight" class="control-label">Cubic Foot Weight</label>
+            <input for="CubicFootWeight" class="form-control"
+            @bind-value="@material.CubicFootWeight" />
+            <label for="Notes1" class="control-label">Notes</label>
+            <input for="Notes1" class="form-control"
+            @bind-value="@material.Notes1" />
+            <label for="Notes2" class="control-label">Notes 2</label>
+            <input for="Notes2" class="form-control"
+            @bind-value="@material.Notes2" />
+        </div>
+         <div class="form-group">
+            <button type="button" class="btn btn-primary"
+               @onclick="() => UpdateMaterial()"> Save </button> 
+            <button type="button" class="btn btn-warning"
+               @onclick="() => cancel()">Cancel</button>
+         </div>
+      </form>
+   </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public int id { get; set; }
+
+    Material material = new Material();
+
+    protected override async Task OnInitializedAsync()
+    {
+        material = await
+           materialService.GetById(id);
+    }
+
+    protected async Task UpdateMaterial()
+    {
+        await materialService.Update(material);
+        navigationManager.NavigateTo("/materials");
+    }
+
+    void cancel()
+    {
+        navigationManager.NavigateTo("/materials");
+    }
+}

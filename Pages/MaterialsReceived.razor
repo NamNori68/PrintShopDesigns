@@ -1,0 +1,37 @@
+﻿@page "/materialsreceived"
+@inject IMaterialReceivedService materialReceivedService
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+
+<h2>Material Received</h2>
+
+<hr />
+
+<div>
+    <RadzenButton Click="@AddButtonClicked" Text="Add New Material Received" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+</div>
+
+<br />
+
+@code {
+    RadzenDataGrid<MaterialReceived>? materialReceivedGrid;
+    IList<MaterialReceived>? materialReceived;
+    IList<MaterialReceived>? selectedMaterialReceived;
+    MaterialReceived? materialReceivedToInsert;
+    MaterialReceived? materialReceivedToUpdate;
+
+    void Reset()
+    {
+        materialReceivedToInsert = null;
+        materialReceivedToUpdate = null;
+    }
+
+    void AddButtonClicked()
+    {
+        navigationManager.NavigateTo("/AddMaterialReceived");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        materialReceived = await materialReceivedService.ListAll();
+    }
+}

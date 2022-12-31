@@ -1,0 +1,44 @@
+@page "/addMaterial"
+@inject IMaterialService materialService
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+
+<h2>Add Material</h2>
+
+<div class="row">
+   <div class="col-md-4">
+      <form>
+         <div class="form-group">
+            <RadzenLabel Text="Material Name" Component="@material.Name" />
+            <RadzenTextBox @bind-Value="material.Name" Style="width:100%; display: block" Name="Name" />
+            <RadzenLabel Text="Type" Component="@material.Type" />
+            <RadzenTextBox @bind-Value="material.Type" Style="width:100%; display: block" Name="Type" />
+            <RadzenLabel Text="Cubic Foot Weight" />
+            <RadzenNumeric TValue="decimal" Format="0.00" ShowUpDown="false" @bind-Value="material.CubicFootWeight" Style="width:100%; display: block" Name="CubicFootWeight" />
+            <RadzenLabel Text="Notes" Component="@material.Notes1" />
+            <RadzenTextBox @bind-Value="material.Notes1" Style="width:100%; display: block" Name="Notes1" />
+            <RadzenLabel Text="Notes 2" Component="@material.Notes2" />
+            <RadzenTextBox @bind-Value="material.Notes2" Style="width:100%; display: block" Name="Notes2" />
+         </div>
+            <br/>
+         <div class="form-group">
+           <RadzenButton Click="@CreateMaterial" Text="Save" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+           <RadzenButton Click="@cancel" Text="Cancel" Icon="add_circle_outline" ButtonStyle="Radzen.ButtonStyle.Warning"></RadzenButton>
+         </div>
+      </form>
+   </div>
+</div>
+
+@code {
+    Material material = new Material();
+
+    protected async Task CreateMaterial()
+    {
+        await materialService.Create(material);
+        navigationManager.NavigateTo("Materials");
+    }
+
+    void cancel()
+    {
+        navigationManager.NavigateTo("/materials");
+    }
+}
