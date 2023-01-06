@@ -23,6 +23,10 @@ builder.Services.AddDbContext<PrintShopDesigns.Data.AppContext>(options => optio
 builder.Services.AddScoped<IMaterialReceivedService, MaterialReceivedService>();
 //Material service
 builder.Services.AddScoped<IMaterialService, MaterialService>();
+//Customer service
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+//Product service
+builder.Services.AddScoped<IProductService, ProductService>();
 //Register dapper in scope
 builder.Services.AddScoped<IDapperService, DapperService>();
 

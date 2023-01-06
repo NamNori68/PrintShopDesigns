@@ -1,9 +1,135 @@
 ﻿@page "/customers"
+@inject ICustomerService customerService
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 
 <PageTitle>Customers</PageTitle>
 
-<h1>Customers</h1>
+<h2>Customers</h2>
+
+<hr />
+
+<div>
+    <RadzenButton Click="@AddButtonClicked" Text="Add New Customer" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+</div>
+
+<br />
+
+<RadzenDataGrid @ref="customersGrid" AllowFiltering="true" AllowPaging="true" PageSize="10" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedCustomer GridLines="Radzen.DataGridGridLines.Horizontal"
+                Data="@_customers" TItem="Customer" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset">
+    <Columns>
+        <RadzenDataGridColumn TItem="Customer" Property="CustomerID" Filterable="false" Title="ID" Frozen="true" Width="40px" Visible="false" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="Customer" Property="CustomerName" Title="Customer Name" Width="125px">
+            <EditTemplate Context="customer">
+                <RadzenTextBox @bind-Value="customer.CustomerName" Style="width:100%; display: block" Name="CustomerName" />
+                <RadzenRequiredValidator Text="Customer Name is required" Component="CustomerName" Popup="true" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Customer" Property="Address" Title="Address" Width="125px">
+            <EditTemplate Context="customer">
+                <RadzenTextBox @bind-Value="customer.Address" Style="width:100%; display: block" Name="Address" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Customer" Property="Address2" Title="Address 2" Width="160px">
+            <EditTemplate Context="customer">
+                <RadzenTextBox @bind-Value="customer.Address2" Style="width:100%; display: block" Name="Address 2" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Customer" Property="City" Title="City" Width="160px">
+            <EditTemplate Context="customer">
+                <RadzenTextBox @bind-Value="customer.City" Style="width:100%; display: block" Name="City" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Customer" Property="State" Title="State" Width="160px">
+            <EditTemplate Context="customer">
+                <RadzenTextBox @bind-Value="customer.State" Style="width:100%; display: block" Name="State" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Customer" Property="Zip" Title="Zip" Width="160px">
+            <EditTemplate Context="customer">
+                <RadzenTextBox @bind-Value="customer.Zip" Style="width:100%; display: block" Name="Zip" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Customer" Context="customer" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
+            <Template Context="customer">
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Small" Click="@(args => EditRow(customer))" @onclick:stopPropagation="true" />
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Small" Class="my-1 ms-1" Click="@(args => DeleteRow(customer.CustomerID))" @onclick:stopPropagation="true" />
+            </Template>
+            <EditTemplate Context="customer">
+                <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Small" Click="@((args) => SaveRow(customer))" />
+                <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Small" Class="my-1 ms-1" Click="@((args) => CancelEdit(customer))" />
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Small" Class="my-1 ms-1" Click="@(args => DeleteRow(customer.CustomerID))" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
 
 @code {
+    RadzenDataGrid<Customer>? customersGrid;
+    IList<Customer>? _customers;
+    IList<Customer>? selectedCustomer;
+    Customer? customerToInsert;
+    Customer? customerToUpdate;
 
+    void Reset()
+    {
+        customerToInsert = null;
+        customerToUpdate = null;
+    }
+
+    void AddButtonClicked()
+    {
+        navigationManager.NavigateTo("/AddCustomer");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _customers = await customerService.ListAll();
+    }
+
+    void OnUpdateRow(Customer _customer)
+    {
+        if (_customer == customerToInsert)
+        {
+            customerToInsert = null;
+        }
+
+        customerToUpdate = null;
+
+        customerService.Update(_customer);
+    }
+
+    async Task SaveRow(Customer _customer)
+    {
+        await customersGrid.UpdateRow(_customer);
+    }
+
+    protected async Task EditRow(Customer _customer)
+    {
+        customerToUpdate = _customer;
+        await customersGrid.EditRow(_customer);
+    }
+
+    protected async Task DeleteRow(int id)
+    {
+        await customerService.Delete(id);
+        _customers = await customerService.ListAll();
+    }
+
+    void CancelEdit(Customer _customer)
+    {
+        if (_customer == customerToInsert)
+        {
+            customerToInsert = null;
+        }
+
+        customerToUpdate = null;
+
+        customersGrid.CancelEditRow(_customer);
+    }
+
+    void OnCreateRow(Customer _customer)
+    {
+        customerService.Create(_customer);
+    }
 }

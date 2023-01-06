@@ -1,0 +1,46 @@
+@page "/addCustomer"
+@inject ICustomerService customerService
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+
+<h2>Add Customer</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <form>
+            <div class="form-group">
+                <RadzenLabel Text="Customer Name" Component="@_customer.CustomerName" />
+                <RadzenTextBox @bind-Value="_customer.CustomerName" Style="width:100%; display: block" Name="Name" />
+                <RadzenLabel Text="Address" Component="@_customer.Address" />
+                <RadzenTextBox @bind-Value="_customer.Address" Style="width:100%; display: block" Name="Address" />
+                <RadzenLabel Text="Address 2" Component="@_customer.Address2" />
+                <RadzenTextBox @bind-Value="_customer.Address2" Style="width:100%; display: block" Name="Address2" />
+                <RadzenLabel Text="City" Component="@_customer.City" />
+                <RadzenTextBox @bind-Value="_customer.City" Style="width:100%; display: block" Name="City" />
+                <RadzenLabel Text="State" Component="@_customer.State" />
+                <RadzenTextBox @bind-Value="_customer.State" Style="width:100%; display: block" Name="State" />
+                <RadzenLabel Text="Zip" Component="@_customer.Zip" />
+                <RadzenTextBox @bind-Value="_customer.Zip" Style="width:100%; display: block" Name="Zip" />
+            </div>
+            <br />
+            <div class="form-group">
+                <RadzenButton Click="@CreateCustomer" Text="Save" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+                <RadzenButton Click="@cancel" Text="Cancel" Icon="add_circle_outline" ButtonStyle="Radzen.ButtonStyle.Warning"></RadzenButton>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    Customer _customer = new Customer();
+
+    protected async Task CreateCustomer()
+    {
+        await customerService.Create(_customer);
+        navigationManager.NavigateTo("/Customers");
+    }
+
+    void cancel()
+    {
+        navigationManager.NavigateTo("/customers");
+    }
+}

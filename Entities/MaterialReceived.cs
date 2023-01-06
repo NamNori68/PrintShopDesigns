@@ -17,10 +17,8 @@ namespace PrintShopDesigns.Entities
 
         public string? VendorLot { get; set; }
 
-        public Int16 Quantity { get; set; }
+        public Int32 Quantity { get; set; }
 
-        public decimal CostLb { get; set; }
-        
         public string? Notes { get; set; }
     }
 }

@@ -6,11 +6,56 @@
 
 <hr />
 
-<div>
-    <RadzenButton Click="@AddButtonClicked" Text="Add New Material Received" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
-</div>
+<RadzenDataGrid @ref="materialReceivedGrid" AllowFiltering="true" AllowPaging="true" PageSize="10" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedMaterialReceived GridLines="Radzen.DataGridGridLines.Horizontal"
+                Data="@materialReceived" TItem="MaterialReceived" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset">
+    <Columns>
+        <RadzenDataGridColumn TItem="MaterialReceived" Property="MaterialReceivedID" Filterable="false" Title="ID" Frozen="true" Width="40px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="MaterialReceived" Property="Name" Title="Material Name" Frozen="true" Width="125px">
+            <EditTemplate Context="materialReceived">
+                <RadzenTextBox @bind-Value="materialReceived.Name" Style="width:100%; display: block" Name="MaterialReceivedName" />
+                <RadzenRequiredValidator Text="Material Received Name is required" Component="MaterialReceivedName" Popup="true" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="MaterialReceived" Property="Type" Title="Type" Frozen="true" Width="125px">
+            <EditTemplate Context="materialReceived">
+                <RadzenTextBox @bind-Value="materialReceived.Type" Style="width:100%; display: block" Name="MaterialType" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="MaterialReceived" Property="KingLot" Title="King Lot #" Frozen="true" Width="160px">
+            <EditTemplate Context="materialReceived">
+                <RadzenTextBox @bind-Value="materialReceived.KingLot" Style="width:100%; display: block" Name="KingLot" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="MaterialReceived" Property="VendorLot" Title="Vendor Lot #" Frozen="true" Width="160px">
+            <EditTemplate Context="materialReceived">
+                <RadzenTextBox @bind-Value="materialReceived.VendorLot" Style="width:100%; display: block" Name="VendorLot" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="MaterialReceived" Property="Quantity" Title="Quantity" Frozen="true" Width="100px">
+            <EditTemplate Context="materialReceived">
+                <RadzenNumeric @bind-Value="materialReceived.Quantity" Style="width:100%; display: block" Name="Quantity" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="MaterialReceived" Property="Notes" Title="Notes" Frozen="true" Width="160px">
+            <EditTemplate Context="materialReceived">
+                <RadzenTextBox @bind-Value="materialReceived.Notes" Style="width:100%; display: block" Name="Notes" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="MaterialReceived" Context="material" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
+            <Template Context="materialReceived">
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Small" Click="@(args => EditRow(materialReceived))" @onclick:stopPropagation="true" />
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Small" Class="my-1 ms-1" Click="@(args => DeleteRow(materialReceived.MaterialReceivedID))" @onclick:stopPropagation="true" />
+            </Template>
+            <EditTemplate Context="materialReceived">
+                <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Small" Click="@((args) => SaveRow(materialReceived))" />
+                <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Small" Class="my-1 ms-1" Click="@((args) => CancelEdit(materialReceived))" />
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Small" Class="my-1 ms-1" Click="@(args => DeleteRow(materialReceived.MaterialReceivedID))" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
 
-<br />
 
 @code {
     RadzenDataGrid<MaterialReceived>? materialReceivedGrid;
@@ -25,13 +70,54 @@
         materialReceivedToUpdate = null;
     }
 
-    void AddButtonClicked()
-    {
-        navigationManager.NavigateTo("/AddMaterialReceived");
-    }
-
     protected override async Task OnInitializedAsync()
     {
         materialReceived = await materialReceivedService.ListAll();
+    }
+
+    void OnUpdateRow(MaterialReceived materialReceived)
+    {
+        if (materialReceived == materialReceivedToInsert)
+        {
+            materialReceivedToInsert = null;
+        }
+
+        materialReceivedToUpdate = null;
+
+        materialReceivedService.Update(materialReceived);
+    }
+
+    async Task SaveRow(MaterialReceived materialReceived)
+    {
+        await materialReceivedGrid.UpdateRow(materialReceived);
+    }
+
+    protected async Task EditRow(MaterialReceived materialReceived)
+    {
+        materialReceivedToUpdate = materialReceived;
+        await materialReceivedGrid.EditRow(materialReceived);
+    }
+
+    protected async Task DeleteRow(int id)
+    {
+        await materialReceivedService.Delete(id);
+        materialReceived = await materialReceivedService.ListAll();
+    }
+
+    void CancelEdit(MaterialReceived materialReceived)
+    {
+        if (materialReceived == materialReceivedToInsert)
+        {
+            materialReceivedToInsert = null;
+        }
+
+        materialReceivedToUpdate = null;
+
+        materialReceivedGrid.CancelEditRow(materialReceived);
+    }
+
+    void OnCreateRow(MaterialReceived materialReceived)
+    {
+        materialReceivedService.Create(materialReceived);
     }
 }

@@ -25,10 +25,8 @@ namespace PrintShopDesigns.Data
 			dbPara.Add("Type", materialReceived.Type, DbType.String);
 			dbPara.Add("KingLot", materialReceived.KingLot, DbType.String);
 			dbPara.Add("VendorLot", materialReceived.VendorLot, DbType.String);
-			dbPara.Add("Quantity", materialReceived.Quantity, DbType.Int16);
-			dbPara.Add("CostLb", materialReceived.CostLb, DbType.Double);
+			dbPara.Add("Quantity", materialReceived.Quantity, DbType.Int32);
 			dbPara.Add("Notes", materialReceived.Notes, DbType.String);
-
 
 			var MaterialReceivedId = Task.FromResult(_dapperService.Insert<int>("dbo.usp_MaterialReceived_Add", dbPara, commandType: CommandType.StoredProcedure));
 
@@ -73,8 +71,7 @@ namespace PrintShopDesigns.Data
 			dbPara.Add("Type", materialReceived.Type, DbType.String);
 			dbPara.Add("KingLot", materialReceived.KingLot, DbType.String);
 			dbPara.Add("VendorLot", materialReceived.VendorLot, DbType.String);
-			dbPara.Add("Quantity", materialReceived.Quantity, DbType.Int16);
-			dbPara.Add("CostLb", materialReceived.CostLb, DbType.Double);
+			dbPara.Add("Quantity", materialReceived.Quantity, DbType.Int32);
 			dbPara.Add("Notes", materialReceived.Notes, DbType.String);
 
 			var updateMaterial = Task.FromResult(_dapperService.Update<int>("dbo.usp_MaterialReceived_Update", dbPara, commandType: CommandType.StoredProcedure));

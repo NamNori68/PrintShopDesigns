@@ -16,29 +16,29 @@
                 SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedMaterial GridLines="Radzen.DataGridGridLines.Horizontal"
                 Data="@materials" TItem="Material" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset">
     <Columns>
-        <RadzenDataGridColumn TItem="Material" Property="MaterialID" Filterable="false" Title="ID" Frozen="true" Width="40px" TextAlign="TextAlign.Center" />
-        <RadzenDataGridColumn TItem="Material" Property="Name" Title="Material Name" Frozen="true" Width="125px">
+        <RadzenDataGridColumn TItem="Material" Property="MaterialID" Filterable="false" Title="ID" Frozen="true" Width="40px" Visible="false" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="Material" Property="Name" Title="Material Name" Width="125px">
             <EditTemplate Context="material">
                 <RadzenTextBox @bind-Value="material.Name" Style="width:100%; display: block" Name="MaterialName" />
                 <RadzenRequiredValidator Text="Material Name is required" Component="MaterialName" Popup="true" />
             </EditTemplate>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Material" Property="Type" Title="Type" Frozen="true" Width="125px">
+        <RadzenDataGridColumn TItem="Material" Property="Type" Title="Type" Width="125px">
             <EditTemplate Context="material">
                 <RadzenTextBox @bind-Value="material.Type" Style="width:100%; display: block" Name="MaterialType" />
             </EditTemplate>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Material" Property="CubicFootWeight" Title="Cubic Foot Weight" Frozen="true" Width="100px">
+        <RadzenDataGridColumn TItem="Material" Property="CubicFootWeight" Title="Cubic Foot Weight" Width="100px">
             <EditTemplate Context="material">
                 <RadzenNumeric @bind-Value="material.CubicFootWeight" Style="width:100%; display: block" Name="CubicFootWeight" />
             </EditTemplate>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Material" Property="Notes1" Title="Notes 1" Frozen="true" Width="160px">
+        <RadzenDataGridColumn TItem="Material" Property="Notes1" Title="Notes 1" Width="160px">
             <EditTemplate Context="material">
                 <RadzenTextBox @bind-Value="material.Notes1" Style="width:100%; display: block" Name="Notes1" />
             </EditTemplate>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Material" Property="Notes2" Title="Notes 2" Frozen="true" Width="160px">
+        <RadzenDataGridColumn TItem="Material" Property="Notes2" Title="Notes 2" Width="160px">
             <EditTemplate Context="material">
                 <RadzenTextBox @bind-Value="material.Notes2" Style="width:100%; display: block" Name="Notes2" />
             </EditTemplate>
@@ -82,7 +82,7 @@
 
     void AddMaterialReceived(Material material)
     {
-        navigationManager.NavigateTo("/AddMaterialReceived");
+        navigationManager.NavigateTo($"/AddMaterialReceived/{material.MaterialID}");
     }
 
     protected override async Task OnInitializedAsync()
