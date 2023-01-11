@@ -14,9 +14,9 @@ namespace PrintShopDesigns.Entities
 
         public string Description { get; set; }
 
-        public DateOnly Created { get; set; }
+        public DateTime Created { get; set; }
 
-        public DateOnly Updated { get; set;}
+        public DateTime Updated { get; set;}
 
         public Boolean  Archived { get; set; } 
     }

@@ -1,9 +1,136 @@
 ﻿@page "/products"
+@inject IProductService productService
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 
 <PageTitle>Products</PageTitle>
 
-<h1>Products</h1>
+<h2>Products</h2>
+
+<hr />
+
+<div>
+    <RadzenButton Click="@AddButtonClicked" Text="Add New Product" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+</div>
+
+<br />
+
+<RadzenDataGrid @ref="productsGrid" AllowFiltering="true" AllowPaging="true" PageSize="10" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedProduct GridLines="Radzen.DataGridGridLines.Horizontal"
+                Data="@_products" TItem="Product" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset">
+    <Columns>
+        <RadzenDataGridColumn TItem="Product" Property="ProductID" Filterable="false" Title="ID" Frozen="true" Width="40px" Visible="false" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="Product" Property="ProductName" Title="Product Name" Width="125px">
+            <EditTemplate Context="product">
+                <RadzenTextBox @bind-Value="product.ProductName" Style="width:100%; display: block" Name="ProductName" />
+                <RadzenRequiredValidator Text="Product Name is required" Component="ProductName" Popup="true" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Product" Property="Type" Title="Type" Width="125px">
+            <EditTemplate Context="product">
+                <RadzenTextBox @bind-Value="product.Type" Style="width:100%; display: block" Name="Type" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Product" Property="Description" Title="Description" Width="160px">
+            <EditTemplate Context="product">
+                <RadzenTextBox @bind-Value="product.Description" Style="width:100%; display: block" Name="Description" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Product" Property="Created" Title="Created" Width="160px" FormatString="{0:d}">
+            <EditTemplate Context="product">
+                <RadzenDatePicker @bind-Value="product.Created" Style="width:100%; display: block" DateFormat="MM/dd/yyyy" Name="Created" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Product" Property="Updated" Title="Updated" Width="160px" FormatString="{0:d}">
+            <EditTemplate Context="product">
+                <RadzenDatePicker @bind-Value="product.Updated" Style="width:100%; display: block" DateFormat="MM/dd/yyyy" Name="Updated" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Product" Property="Archived" Title="Archived" Width="160px">
+            <EditTemplate Context="product">
+                <RadzenCheckBox @bind-Value="product.Archived" Style="display: block" Name="Archived" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Product" Context="product" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
+            <Template Context="product">
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Small" Click="@(args => EditRow(product))" @onclick:stopPropagation="true" />
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Small" Class="my-1 ms-1" Click="@(args => DeleteRow(product.ProductID))" @onclick:stopPropagation="true" />
+            </Template>
+            <EditTemplate Context="product">
+                <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Small" Click="@((args) => SaveRow(product))" />
+                <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Small" Class="my-1 ms-1" Click="@((args) => CancelEdit(product))" />
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Small" Class="my-1 ms-1" Click="@(args => DeleteRow(product.ProductID))" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
 
 @code {
 
+    RadzenDataGrid<Product>? productsGrid;
+    IList<Product>? _products;
+    IList<Product>? selectedProduct;
+    Product? productToInsert;
+    Product? productToUpdate;
+
+    void Reset()
+    {
+        productToInsert = null;
+        productToUpdate = null;
+    }
+
+    void AddButtonClicked()
+    {
+        navigationManager.NavigateTo("/AddProduct");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _products = await productService.ListAll();
+    }
+
+    void OnUpdateRow(Product _products)
+    {
+        if (_products == productToInsert)
+        {
+            productToInsert = null;
+        }
+
+        productToUpdate = null;
+
+        productService.Update(_products);
+    }
+
+    async Task SaveRow(Product _products)
+    {
+        await productsGrid.UpdateRow(_products);
+    }
+
+    protected async Task EditRow(Product _products)
+    {
+        productToUpdate = _products;
+        await productsGrid.EditRow(_products);
+    }
+
+    protected async Task DeleteRow(int id)
+    {
+        await productService.Delete(id);
+        _products = await productService.ListAll();
+    }
+
+    void CancelEdit(Product _products)
+    {
+        if (_products == productToInsert)
+        {
+            productToInsert = null;
+        }
+
+        productToUpdate = null;
+
+        productsGrid.CancelEditRow(_products);
+    }
+
+    void OnCreateRow(Product _products)
+    {
+        productService.Create(_products);
+    }
 }
