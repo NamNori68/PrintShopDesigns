@@ -18,6 +18,11 @@ builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<ContextMenuService>();
 builder.Services.AddDbContext<PrintShopDesigns.Data.AppContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDevExpressBlazor();
+builder.Services.AddDevExpressServerSideBlazorReportViewer();
+builder.Services.Configure<DevExpress.Blazor.Configuration.GlobalOptions>(options => {
+    options.BootstrapVersion = DevExpress.Blazor.BootstrapVersion.v5;
+});
 
 //MaterialReceived service
 builder.Services.AddScoped<IMaterialReceivedService, MaterialReceivedService>();
@@ -45,8 +50,17 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.MapControllers();
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
+//app.MapControllers();
+//app.MapBlazorHub();
+//app.MapFallbackToPage("/_Host");
+
+app.UseEndpoints(endpoints => {
+    endpoints.MapControllers();
+    endpoints.MapBlazorHub();
+    endpoints.MapFallbackToPage("/_Host");
+});
+
+string contentPath = app.Environment.ContentRootPath;
+AppDomain.CurrentDomain.SetData("DXResourceDirectory", contentPath);
 
 app.Run();

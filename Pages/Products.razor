@@ -14,8 +14,8 @@
 
 <br />
 
-<RadzenDataGrid @ref="productsGrid" AllowFiltering="true" AllowPaging="true" PageSize="10" AllowSorting="true" EditMode="DataGridEditMode.Single"
-                SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedProduct GridLines="Radzen.DataGridGridLines.Horizontal"
+<RadzenDataGrid @ref="productsGrid" AllowFiltering="true" AllowPaging="true" PageSize="10" AllowSorting="true" EditMode="Radzen.DataGridEditMode.Single"
+                SelectionMode="Radzen.DataGridSelectionMode.Single" @bind-Value=@selectedProduct GridLines="Radzen.DataGridGridLines.Horizontal"
                 Data="@_products" TItem="Product" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset">
     <Columns>
         <RadzenDataGridColumn TItem="Product" Property="ProductID" Filterable="false" Title="ID" Frozen="true" Width="40px" Visible="false" TextAlign="TextAlign.Center" />

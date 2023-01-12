@@ -6,8 +6,8 @@
 
 <hr />
 
-<RadzenDataGrid @ref="materialReceivedGrid" AllowFiltering="true" AllowPaging="true" PageSize="10" AllowSorting="true" EditMode="DataGridEditMode.Single"
-                SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedMaterialReceived GridLines="Radzen.DataGridGridLines.Horizontal"
+<RadzenDataGrid @ref="materialReceivedGrid" AllowFiltering="true" AllowPaging="true" PageSize="10" AllowSorting="true" EditMode="Radzen.DataGridEditMode.Single"
+                SelectionMode="Radzen.DataGridSelectionMode.Single" @bind-Value=@selectedMaterialReceived GridLines="Radzen.DataGridGridLines.Horizontal"
                 Data="@materialReceived" TItem="MaterialReceived" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset">
     <Columns>
         <RadzenDataGridColumn TItem="MaterialReceived" Property="MaterialReceivedID" Filterable="false" Title="ID" Frozen="true" Width="40px" TextAlign="TextAlign.Center" />

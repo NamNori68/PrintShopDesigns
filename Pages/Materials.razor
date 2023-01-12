@@ -12,8 +12,8 @@
 
 <br/>
 
-<RadzenDataGrid @ref="materialsGrid" AllowFiltering="true" AllowPaging="true" PageSize="10" AllowSorting="true" EditMode="DataGridEditMode.Single" 
-                SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedMaterial GridLines="Radzen.DataGridGridLines.Horizontal"
+<RadzenDataGrid @ref="materialsGrid" AllowFiltering="true" AllowPaging="true" PageSize="10" AllowSorting="true" EditMode="Radzen.DataGridEditMode.Single" 
+                SelectionMode="Radzen.DataGridSelectionMode.Single" @bind-Value=@selectedMaterial GridLines="Radzen.DataGridGridLines.Horizontal"
                 Data="@materials" TItem="Material" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset">
     <Columns>
         <RadzenDataGridColumn TItem="Material" Property="MaterialID" Filterable="false" Title="ID" Frozen="true" Width="40px" Visible="false" TextAlign="TextAlign.Center" />
