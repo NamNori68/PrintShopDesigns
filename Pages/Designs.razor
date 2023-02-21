@@ -1,0 +1,18 @@
+﻿@page "/designs"
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+
+<h2>Designs</h2>
+
+<hr/>
+
+<div>
+    <RadzenButton Click="@AddButtonClicked" Text="Add New Design" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+</div>
+
+
+@code {
+    void AddButtonClicked()
+    {
+        navigationManager.NavigateTo("/AddDesign");
+    }
+}
