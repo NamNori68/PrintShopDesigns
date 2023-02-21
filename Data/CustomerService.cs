@@ -27,6 +27,7 @@ namespace PrintShopDesigns.Data
             dbPara.Add("City", _customer.City, DbType.String);
             dbPara.Add("State", _customer.State, DbType.String);
             dbPara.Add("Zip", _customer.Zip, DbType.String);
+            dbPara.Add("Active", _customer.Active, DbType.Boolean);
 
             var CustomerID = Task.FromResult(_dapperService.Insert<int>("dbo.usp_Customer_Add", dbPara, commandType: CommandType.StoredProcedure));
 
@@ -73,6 +74,7 @@ namespace PrintShopDesigns.Data
             dbPara.Add("City", _customer.City, DbType.String);
             dbPara.Add("State", _customer.State, DbType.String);
             dbPara.Add("Zip", _customer.Zip, DbType.String);
+            dbPara.Add("Active", _customer.Active, DbType.Boolean);
 
             var updateCustomer = Task.FromResult(_dapperService.Update<int>("dbo.usp_Customer_Update", dbPara, commandType: CommandType.StoredProcedure));
 

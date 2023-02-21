@@ -20,6 +20,8 @@
                 <RadzenTextBox @bind-Value="_customer.State" Style="width:100%; display: block" Name="State" />
                 <RadzenLabel Text="Zip" Component="@_customer.Zip" />
                 <RadzenTextBox @bind-Value="_customer.Zip" Style="width:100%; display: block" Name="Zip" />
+                <RadzenLabel Text="Active" />
+                <RadzenCheckBox @bind-Value="_customer.Active" Name="Active" />
             </div>
             <br />
             <div class="form-group">

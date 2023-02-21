@@ -50,6 +50,11 @@
                 <RadzenTextBox @bind-Value="customer.Zip" Style="width:100%; display: block" Name="Zip" />
             </EditTemplate>
         </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Customer" Property="Active" Title="Active" Width="160px">
+            <EditTemplate Context="customer">
+                <RadzenCheckBox @bind-Value="customer.Active" Style="display: block" Name="Active" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="Customer" Context="customer" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
             <Template Context="customer">
                 <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Small" Click="@(args => EditRow(customer))" @onclick:stopPropagation="true" />
