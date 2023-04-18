@@ -39,7 +39,13 @@ namespace PrintShopDesigns.Data
 			using IDbConnection db = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
 			return db.Execute(sp, parms, commandType: commandType);
 		}
-		public T Insert<T>(string sp, DynamicParameters parms, CommandType commandType = CommandType.StoredProcedure)
+        public string GetID(string sp, DynamicParameters parms, CommandType commandType = CommandType.StoredProcedure)
+        {
+            using IDbConnection db = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            return db.Query<int>(sp, parms, commandType: commandType).First().ToString();
+        }
+
+        public T Insert<T>(string sp, DynamicParameters parms, CommandType commandType = CommandType.StoredProcedure)
 		{
 			T result;
 			using IDbConnection db = new SqlConnection(_config.GetConnectionString("DefaultConnection"));

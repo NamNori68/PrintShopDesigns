@@ -32,6 +32,8 @@ builder.Services.AddScoped<IMaterialService, MaterialService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 //Product service
 builder.Services.AddScoped<IProductService, ProductService>();
+//Design service
+builder.Services.AddScoped<iDesignService, DesignService>();
 //Register dapper in scope
 builder.Services.AddScoped<IDapperService, DapperService>();
 

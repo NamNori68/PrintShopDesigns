@@ -1,0 +1,48 @@
+@page "/addDesign-Label"
+@inject iDesignService designService
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+
+<h2>Add Label Design</h2>
+<RadzenLabel Text="Design #" />
+<RadzenTextBox @bind-Value="asdf" Style="display: block"></RadzenTextBox>
+<br />
+<RadzenCard Text="Product">
+    <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="Product"></RadzenText><br />
+    <RadzenLabel Text="Item" /><br />
+    <RadzenDropDown Style="width: 300px" TValue="dynamic"></RadzenDropDown><br /><br />
+    <RadzenLabel Text="Color" /><br />
+    <RadzenDropDown Style="width: 300px" TValue="dynamic"></RadzenDropDown><br /><br />
+    <RadzenLabel Text="Hold" /><br />
+    <RadzenCheckBox TValue="bool"></RadzenCheckBox><br /><br />
+    <RadzenLabel Text="Notes" /><br />
+    <RadzenTextBox Style="width: 500px"></RadzenTextBox>
+</RadzenCard>
+
+<br />
+
+<RadzenCard Text="Customer">
+    <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="Customer"></RadzenText><br />
+    <RadzenDropDown Style="width: 300px" TValue="dynamic"></RadzenDropDown><br /><br />
+    <RadzenRadioButtonList TValue="int" Orientation="Radzen.Orientation.Vertical">
+        <Items>
+            <RadzenRadioButtonListItem Text="Topside" Value="1" />
+            <RadzenRadioButtonListItem Text="Underside" Value="2" />
+        </Items>
+    </RadzenRadioButtonList><br/>
+    <RadzenLabel Text="Machine" />
+</RadzenCard>
+
+<hr />
+
+
+@code {
+    IList<Design>? _design;
+    string _nextID;
+    string asdf;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _nextID = await designService.GetNextId();
+        asdf = "L-" + _nextID.ToString();
+    }
+}

@@ -6,13 +6,19 @@
 <hr/>
 
 <div>
-    <RadzenButton Click="@AddButtonClicked" Text="Add New Design" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+    <RadzenButton Click="@AddLabelDesignClicked" Text="Add New Label Design" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+    <RadzenButton Click="@AddPrintDesignClicked" Text="Add New Print Design" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
 </div>
 
 
 @code {
-    void AddButtonClicked()
+    void AddLabelDesignClicked()
     {
-        navigationManager.NavigateTo("/AddDesign");
+        navigationManager.NavigateTo("/AddDesign-Label");
+    }
+
+    void AddPrintDesignClicked()
+    {
+        navigationManager.NavigateTo("/AddDesign-Print");
     }
 }
