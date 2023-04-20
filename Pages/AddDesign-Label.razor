@@ -1,15 +1,17 @@
 @page "/addDesign-Label"
 @inject iDesignService designService
+@inject IProductService productService
+@inject ICustomerService customerService
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 
 <h2>Add Label Design</h2>
 <RadzenLabel Text="Design #" />
-<RadzenTextBox @bind-Value="asdf" Style="display: block"></RadzenTextBox>
+<RadzenTextBox @bind-Value="_designID" Style="display: block"></RadzenTextBox>
 <br />
 <RadzenCard Text="Product">
     <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="Product"></RadzenText><br />
     <RadzenLabel Text="Item" /><br />
-    <RadzenDropDown Style="width: 300px" TValue="dynamic"></RadzenDropDown><br /><br />
+    <RadzenDropDown Name="products" Style="width: 300px" @bind-Value=@productValue Data=@_productNames></RadzenDropDown><br /><br />
     <RadzenLabel Text="Color" /><br />
     <RadzenDropDown Style="width: 300px" TValue="dynamic"></RadzenDropDown><br /><br />
     <RadzenLabel Text="Hold" /><br />
@@ -22,7 +24,7 @@
 
 <RadzenCard Text="Customer">
     <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="Customer"></RadzenText><br />
-    <RadzenDropDown Style="width: 300px" TValue="dynamic"></RadzenDropDown><br /><br />
+    <RadzenDropDown Name="customers" Style="width: 300px" @bind-Value=@customerValue Data=@_customerNames></RadzenDropDown><br /><br />
     <RadzenRadioButtonList TValue="int" Orientation="Radzen.Orientation.Vertical">
         <Items>
             <RadzenRadioButtonListItem Text="Topside" Value="1" />
@@ -37,12 +39,29 @@
 
 @code {
     IList<Design>? _design;
+    IList<Product>? _products;
+    IList<Customer>? _customers;
+    IEnumerable<string>? _productNames;
+    IEnumerable<string>? _productColors;
+    IEnumerable<string>? _customerNames;
+
     string _nextID;
-    string asdf;
+    string _designID;
+    string productValue = "Select Product";
+    string customerValue = "Select Customer";
 
     protected override async Task OnInitializedAsync()
     {
         _nextID = await designService.GetNextId();
-        asdf = "L-" + _nextID.ToString();
+        _designID = "L-" + _nextID.ToString();
+
+        //Populate the Product Section
+        _products = await productService.ListAll();
+        _productNames = _products.Select(c => c.ProductName);
+        //_productColors = _products.Select(c => c);
+
+        //Populate the Customer Section
+        _customers = await customerService.ListAll();
+        _customerNames = _customers.Select(c => c.CustomerName);
     }
 }
