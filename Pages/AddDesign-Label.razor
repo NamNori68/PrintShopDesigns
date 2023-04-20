@@ -58,7 +58,6 @@
         //Populate the Product Section
         _products = await productService.ListAll();
         _productNames = _products.Select(c => c.ProductName);
-        //_productColors = _products.Select(c => c);
 
         //Populate the Customer Section
         _customers = await customerService.ListAll();
