@@ -5,37 +5,87 @@
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 
 <h2>Add Label Design</h2>
-<RadzenLabel Text="Design #" />
-<RadzenTextBox @bind-Value="_designID" Style="display: block"></RadzenTextBox>
-<br />
-<RadzenCard Text="Product">
-    <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="Product"></RadzenText><br />
-    <RadzenLabel Text="Item" /><br />
-    <RadzenDropDown Name="products" Style="width: 300px" @bind-Value=@productValue Data=@_productNames></RadzenDropDown><br /><br />
-    <RadzenLabel Text="Color" /><br />
-    <RadzenDropDown Style="width: 300px" TValue="dynamic"></RadzenDropDown><br /><br />
-    <RadzenLabel Text="Hold" /><br />
-    <RadzenCheckBox TValue="bool"></RadzenCheckBox><br /><br />
-    <RadzenLabel Text="Notes" /><br />
-    <RadzenTextBox Style="width: 500px"></RadzenTextBox>
-</RadzenCard>
-
-<br />
-
-<RadzenCard Text="Customer">
-    <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="Customer"></RadzenText><br />
-    <RadzenDropDown Name="customers" Style="width: 300px" @bind-Value=@customerValue Data=@_customerNames></RadzenDropDown><br /><br />
-    <RadzenRadioButtonList TValue="int" Orientation="Radzen.Orientation.Vertical">
-        <Items>
-            <RadzenRadioButtonListItem Text="Topside" Value="1" />
-            <RadzenRadioButtonListItem Text="Underside" Value="2" />
-        </Items>
-    </RadzenRadioButtonList><br/>
-    <RadzenLabel Text="Machine" />
-</RadzenCard>
-
 <hr />
 
+<RadzenStack Gap="1rem" Style="position: relative">
+    <RadzenRow>
+        <RadzenColumn Size="8" SizeMD="4">
+            <RadzenLabel Text="Design #" />
+            <RadzenTextBox @bind-Value="_designID" Style="display: block" />
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="4" Style="text-align: right">
+            <RadzenLabel Style="font-weight: 600; font-size: 16px; color: #293a50" Text="Created:" />
+            <RadzenLabel Style="font-weight: 600; font-size: 16px; color: #293a50" Text="10/11/1968" /><br />
+            <RadzenLabel Style="font-weight: 600; font-size: 16px; color: #293a50" Text="Modified:" />
+            <RadzenLabel Style="font-weight: 600; font-size: 16px; color: #293a50" Text="10/11/1987" />
+        </RadzenColumn>
+    </RadzenRow>
+
+    <RadzenRow>
+        <RadzenColumn Size="8" SizeMD="4">
+            <RadzenCard Style="height: 375px">
+                <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="Product"></RadzenText><br />
+                <RadzenDropDown Name="products" Style="width: 400px" @bind-Value=@productValue Data=@_productNames></RadzenDropDown><br /><br />
+                <RadzenLabel Text="Color" /><br />
+                <RadzenDropDown Name="color" Style="width: 400px" @bind-Value=@colorValue Data="@_productColors"></RadzenDropDown><br /><br />
+                <RadzenLabel Text="Hold" /><br />
+                <RadzenCheckBox TValue="bool"></RadzenCheckBox>Yes/No<br /><br />
+                <RadzenLabel Text="Machine" /><br />
+                <RadzenDropDown Name="machine" Style="width: 400px" @bind-Value=@machineValue Data="@_machines"></RadzenDropDown><br />
+            </RadzenCard>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="4">
+            <RadzenCard Style="height: 375px">
+                <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="Customer"></RadzenText><br />
+                <RadzenDropDown Name="customers" Style="width: 400px" @bind-Value=@customerValue Data=@_customerNames></RadzenDropDown><br /><br />
+            </RadzenCard>
+        </RadzenColumn>
+    </RadzenRow>
+
+    <RadzenRow>
+        <RadzenColumn Size="8" SizeMD="8">
+            <RadzenCard>
+                <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="Design Details"></RadzenText><br />
+                <RadzenLabel Text="Label Position" /><br /><br/>
+                <RadzenRadioButtonList TValue="int" Orientation="Radzen.Orientation.Horizontal">
+                    <Items>
+                        <RadzenRadioButtonListItem Text="Topside" Value="1" />
+                        <RadzenRadioButtonListItem Text="Underside" Value="2" />
+                    </Items>
+                </RadzenRadioButtonList><br />
+                <RadzenLabel Text="Description" /><br />
+                <RadzenTextBox Style="width: 900px"></RadzenTextBox><br /><br />
+                <RadzenTextBox Style="width: 900px"></RadzenTextBox><br /><br />
+                <RadzenTextBox Style="width: 900px"></RadzenTextBox><br /><br />
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <RadzenLabel Text="Weight" /><br />
+                            <RadzenTextBox></RadzenTextBox>
+                        </td>
+                        <td align="center">
+                            <RadzenLabel Text="UPC #" /><br />
+                            <RadzenTextBox></RadzenTextBox>
+                        </td>
+                        <td align="right">
+                            <RadzenLabel Text="Customer Item Code" /><br />
+                            <RadzenTextBox></RadzenTextBox>
+                        </td>
+                    </tr>
+                </table>
+            </RadzenCard>
+        </RadzenColumn>
+    </RadzenRow>
+
+    <RadzenRow>
+        <RadzenColumn Size="8" SizeMD="8">
+            <RadzenCard>
+                <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="Notes"></RadzenText><br />
+                <RadzenTextArea Style="width: 900px"></RadzenTextArea><br/><br/>
+            </RadzenCard>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>
 
 @code {
     IList<Design>? _design;
@@ -44,11 +94,14 @@
     IEnumerable<string>? _productNames;
     IEnumerable<string>? _productColors;
     IEnumerable<string>? _customerNames;
+    IEnumerable<string>? _machines;
 
     string _nextID;
     string _designID;
     string productValue = "Select Product";
     string customerValue = "Select Customer";
+    string colorValue = "Select Color";
+    string machineValue = "Select Machine";
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,6 +111,7 @@
         //Populate the Product Section
         _products = await productService.ListAll();
         _productNames = _products.Select(c => c.ProductName);
+        // if we select a product type that's a lid, then we auto-select "Topside" and hide the "Underside" option of the radio button in the Customer Section
 
         //Populate the Customer Section
         _customers = await customerService.ListAll();
