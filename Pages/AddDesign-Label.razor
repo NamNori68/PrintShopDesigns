@@ -1,7 +1,9 @@
 @page "/addDesign-Label"
+@page "/addDesign-Label/{DesignID:int}"
 @inject iDesignService designService
 @inject IProductService productService
 @inject ICustomerService customerService
+@inject iColorService colorService
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 
 <h2>Add Label Design</h2>
@@ -9,67 +11,65 @@
 
 <RadzenStack Gap="1rem" Style="position: relative">
     <RadzenRow>
-        <RadzenColumn Size="8" SizeMD="4">
-            <RadzenLabel Text="Design #" />
-            <RadzenTextBox @bind-Value="_designID" Style="display: block" />
+        <RadzenColumn Size="6">
+            <label style="font-size: 16px">Design #: <strong>@(_design.KingDesignID)</strong></label>
         </RadzenColumn>
-        <RadzenColumn Size="12" SizeMD="4" Style="text-align: right">
-            <RadzenLabel Style="font-weight: 600; font-size: 16px; color: #293a50" Text="Created:" />
-            <RadzenLabel Style="font-weight: 600; font-size: 16px; color: #293a50" Text="10/11/1968" /><br />
-            <RadzenLabel Style="font-weight: 600; font-size: 16px; color: #293a50" Text="Modified:" />
-            <RadzenLabel Style="font-weight: 600; font-size: 16px; color: #293a50" Text="10/11/1987" />
+        <RadzenColumn Size="6" Style="text-align: right">
+            <label style="font-size: 16px">Created: <strong>@(createdLabel)</strong></label><br/>
+            <label hidden="@IsHidden" style="font-size: 16px">Updated: <strong>@(updatedLabel)</strong></label>
         </RadzenColumn>
     </RadzenRow>
 
     <RadzenRow>
-        <RadzenColumn Size="8" SizeMD="4">
+        <RadzenColumn Size="6">
             <RadzenCard Style="height: 375px">
                 <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="Product"></RadzenText><br />
-                <RadzenDropDown Name="products" Style="width: 400px" @bind-Value=@productValue Data=@_productNames></RadzenDropDown><br /><br />
+                <RadzenDropDown Name="products" Style="width: 400px" @bind-Value=@_design.Item Data=@_productNames></RadzenDropDown><br /><br />
+
                 <RadzenLabel Text="Color" /><br />
-                <RadzenDropDown Name="color" Style="width: 400px" @bind-Value=@colorValue Data="@_productColors"></RadzenDropDown><br /><br />
+                <RadzenDropDown Name="color" Style="width: 400px" @bind-Value=@_design.Color Data="@_productColors"></RadzenDropDown><br /><br />
+
                 <RadzenLabel Text="Hold" /><br />
-                <RadzenCheckBox TValue="bool"></RadzenCheckBox>Yes/No<br /><br />
+                <RadzenCheckBox @bind-Value=@_design.Hold></RadzenCheckBox>Yes/No<br /><br />
+
                 <RadzenLabel Text="Machine" /><br />
                 <RadzenDropDown Name="machine" Style="width: 400px" @bind-Value=@machineValue Data="@_machines"></RadzenDropDown><br />
             </RadzenCard>
         </RadzenColumn>
-        <RadzenColumn Size="12" SizeMD="4">
+        <RadzenColumn Size="6">
             <RadzenCard Style="height: 375px">
                 <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="Customer"></RadzenText><br />
-                <RadzenDropDown Name="customers" Style="width: 400px" @bind-Value=@customerValue Data=@_customerNames></RadzenDropDown><br /><br />
+                <RadzenDropDown Name="CustomerName" Style="width: 400px" @bind-Value=@_design.Customer Data=@_customerNames></RadzenDropDown><br /><br />
             </RadzenCard>
         </RadzenColumn>
     </RadzenRow>
 
     <RadzenRow>
-        <RadzenColumn Size="8" SizeMD="8">
+        <RadzenColumn Size="12">
             <RadzenCard>
                 <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="Design Details"></RadzenText><br />
                 <RadzenLabel Text="Label Position" /><br /><br/>
-                <RadzenRadioButtonList TValue="int" Orientation="Radzen.Orientation.Horizontal">
+                <RadzenRadioButtonList TValue="int" @bind-Value=@_design.LabelPosition TextProperty="LabelPosition" Orientation="Radzen.Orientation.Horizontal">
                     <Items>
                         <RadzenRadioButtonListItem Text="Topside" Value="1" />
                         <RadzenRadioButtonListItem Text="Underside" Value="2" />
                     </Items>
                 </RadzenRadioButtonList><br />
                 <RadzenLabel Text="Description" /><br />
-                <RadzenTextBox Style="width: 900px"></RadzenTextBox><br /><br />
-                <RadzenTextBox Style="width: 900px"></RadzenTextBox><br /><br />
-                <RadzenTextBox Style="width: 900px"></RadzenTextBox><br /><br />
+                <RadzenTextBox Style="width: 900px" @bind-Value="_design.Description"></RadzenTextBox><br /><br />
                 <table width="100%">
                     <tr>
                         <td>
                             <RadzenLabel Text="Weight" /><br />
-                            <RadzenTextBox></RadzenTextBox>
+                            <RadzenTextBox @bind-Value="_design.Weight"></RadzenTextBox>
                         </td>
                         <td align="center">
                             <RadzenLabel Text="UPC #" /><br />
-                            <RadzenTextBox></RadzenTextBox>
+                            <RadzenTextBox @bind-Value="_design.UPC"></RadzenTextBox>
                         </td>
                         <td align="right">
                             <RadzenLabel Text="Customer Item Code" /><br />
-                            <RadzenTextBox></RadzenTextBox>
+                            <RadzenTextBox @bind-Value="_design.CustomerItemCode"></RadzenTextBox>
                         </td>
                     </tr>
                 </table>
@@ -78,26 +78,39 @@
     </RadzenRow>
 
     <RadzenRow>
-        <RadzenColumn Size="8" SizeMD="8">
+        <RadzenColumn Size="12">
             <RadzenCard>
                 <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="Notes"></RadzenText><br />
-                <RadzenTextArea Style="width: 900px"></RadzenTextArea><br/><br/>
+                <RadzenTextArea Style="width: 900px" @bind-Value="_design.Notes"></RadzenTextArea><br /><br />
             </RadzenCard>
         </RadzenColumn>
     </RadzenRow>
 </RadzenStack>
+<br />
+<div class="form-group">
+    <RadzenButton Click="@CreateDesign" Text="Save" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+    <RadzenButton Click="@cancel" Text="Cancel" Icon="add_circle_outline" ButtonStyle="Radzen.ButtonStyle.Warning"></RadzenButton>
+</div>
 
 @code {
-    IList<Design>? _design;
+    Design _design;
     IList<Product>? _products;
     IList<Customer>? _customers;
+    IList<Color> _colors;
     IEnumerable<string>? _productNames;
     IEnumerable<string>? _productColors;
     IEnumerable<string>? _customerNames;
     IEnumerable<string>? _machines;
 
+    [Parameter]
+    public int DesignID{ get; set; }
+
+    private bool IsHidden { get; set; }
+    private string createdLabel { get; set; }
+    private string updatedLabel { get; set; }
+    bool _newDesign;
     string _nextID;
-    string _designID;
+    string _kingDesignID;
     string productValue = "Select Product";
     string customerValue = "Select Customer";
     string colorValue = "Select Color";
@@ -105,9 +118,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _nextID = await designService.GetNextId();
-        _designID = "L-" + _nextID.ToString();
-
         //Populate the Product Section
         _products = await productService.ListAll();
         _productNames = _products.Select(c => c.ProductName);
@@ -116,5 +126,53 @@
         //Populate the Customer Section
         _customers = await customerService.ListAll();
         _customerNames = _customers.Select(c => c.CustomerName);
+
+        //Populate the Color List
+        _colors = await colorService.ListAll();
+        _productColors = _colors.Select(c => c.ColorName);
+
+        // if designid is 0 then we're coming in to create a brand new design
+        if (DesignID == 0)
+        {
+            _newDesign = true;
+            _design = new Design();
+
+            _nextID = await designService.GetNextId();
+            _design.KingDesignID = "L-" + _nextID.ToString() + "-A";
+
+            createdLabel = DateOnly.FromDateTime(DateTime.Today).ToString();
+            IsHidden = true;
+
+        } else { // else we have a designid passed in as a page parameter, so we get that design in order to populate the page
+            _newDesign = false;
+            _design = await designService.GetById(DesignID);
+
+            createdLabel = DateOnly.FromDateTime(_design.Created).ToString();
+
+            if (_design.Updated.Year == 0001)
+            {
+                IsHidden = true;
+            }
+            else
+            {
+                updatedLabel = DateOnly.FromDateTime(_design.Updated).ToString();
+                IsHidden = false;
+            }
+        }
+    }
+
+    protected async Task CreateDesign()
+    {
+        if (_newDesign)
+            await designService.Create(_design);
+        else
+            await designService.Update(_design);
+
+        navigationManager.NavigateTo("/Designs");
+    }
+
+    void cancel()
+    {
+        navigationManager.NavigateTo("/Designs");
     }
 }

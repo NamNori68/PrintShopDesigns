@@ -1,4 +1,5 @@
 ﻿@page "/designs"
+@inject iDesignService designService
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 
 <h2>Designs</h2>
@@ -10,8 +11,120 @@
     <RadzenButton Click="@AddPrintDesignClicked" Text="Add New Print Design" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
 </div>
 
+<br />
 
-@code {
+<RadzenDataGrid @ref="designsGrid" AllowFiltering="true" AllowPaging="true" PageSize="10" AllowSorting="true" EditMode="Radzen.DataGridEditMode.Single"
+                SelectionMode="Radzen.DataGridSelectionMode.Single" @bind-Value=@selectedDesign GridLines="Radzen.DataGridGridLines.Horizontal"
+                Data="@_designs" TItem="Design" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset">
+    <Columns>
+        <RadzenDataGridColumn TItem="Design" Property="KingDesignID" Title="Design ID" Width="125px">
+            <EditTemplate Context="design">
+                <RadzenTextBox @bind-Value="design.KingDesignID" Style="width:100%; display: block" Name="Item" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Design" Property="Item" Title="Item" Width="125px">
+            <EditTemplate Context="design">
+                <RadzenTextBox @bind-Value="design.Item" Style="width:100%; display: block" Name="Item" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Design" Property="Color" Title="Color" Width="100px">
+            <EditTemplate Context="design">
+                <RadzenTextBox @bind-Value="design.Color" Style="width:100%; display: block" Name="CustomerName" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Design" Property="Hold" Title="Hold" Width="50px">
+            <EditTemplate Context="design">
+                <RadzenCheckBox @bind-Value="design.Hold" Style="width:100%; display: block" Name="Hold" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Design" Property="Customer" Title="Customer" Width="160px">
+            <EditTemplate Context="design">
+                <RadzenTextBox @bind-Value="design.Customer" Style="width:100%; display: block" Name="Customer" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Design" Property="Description" Title="Description" Width="160px">
+            <EditTemplate Context="design">
+                <RadzenTextBox @bind-Value="design.Description" Style="width:100%; display: block" Name="Description" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Design" Context="customer" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="100px">
+            <Template Context="design">
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Small" Click="@(args => EditRow(design))" @onclick:stopPropagation="true" />
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Small" Class="my-1 ms-1" Click="@(args => DeleteRow(design.DesignID))" @onclick:stopPropagation="true" />
+            </Template>
+            <EditTemplate Context="design">
+                <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Small" Click="@((args) => SaveRow(design))" />
+                <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Small" Class="my-1 ms-1" Click="@((args) => CancelEdit(design))" />
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Small" Class="my-1 ms-1" Click="@(args => DeleteRow(design.DesignID))" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+
+    @code {
+        RadzenDataGrid<Design>? designsGrid;
+        IList<Design>? _designs;
+        IList<Design>? selectedDesign;
+        Design designToInsert;
+        Design designToUpdate;
+
+        void Reset()
+        {
+            designToInsert = null;
+            designToUpdate = null;
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            _designs = await designService.ListAll();
+        }
+
+        void OnUpdateRow(Design _designs)
+        {
+            if (_designs == designToInsert)
+            {
+                designToInsert = null;
+            }
+
+            designToUpdate = null;
+
+            designService.Update(_designs);
+        }
+
+        async Task SaveRow(Design _designs)
+        {
+            await designsGrid.UpdateRow(_designs);
+        }
+
+        protected async Task EditRow(Design _designs)
+        {
+           navigationManager.NavigateTo("/AddDesign-Label/" + _designs.DesignID);
+        }
+
+        protected async Task DeleteRow(int id)
+        {
+            await designService.Delete(id);
+            _designs = await designService.ListAll();
+        }
+
+        void CancelEdit(Design _designs)
+        {
+            if (_designs == designToInsert)
+            {
+                designToInsert = null;
+            }
+
+            designToUpdate = null;
+
+            designsGrid.CancelEditRow(_designs);
+        }
+
+        void OnCreateRow(Design _customer)
+        {
+            designService.Create(_customer);
+        }
+
     void AddLabelDesignClicked()
     {
         navigationManager.NavigateTo("/AddDesign-Label");

@@ -36,6 +36,8 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<iDesignService, DesignService>();
 //Register dapper in scope
 builder.Services.AddScoped<IDapperService, DapperService>();
+//Color Service
+builder.Services.AddScoped<iColorService, ColorService>();
 
 var app = builder.Build();
 

@@ -23,11 +23,19 @@ namespace PrintShopDesigns.Data
         {
             var dbPara = new DynamicParameters();
 
-            dbPara.Add("DesignID", _design.DesignID, DbType.Int16);
+            dbPara.Add("KingDesignID", _design.KingDesignID, DbType.String);
             dbPara.Add("Item", _design.Item, DbType.String);
             dbPara.Add("Color", _design.Color, DbType.String);
-            dbPara.Add("Hold", _design.Hold, DbType.Binary);
+            dbPara.Add("Hold", _design.Hold, DbType.Boolean);
             dbPara.Add("Notes", _design.Notes, DbType.String);
+            dbPara.Add("Customer", _design.Customer, DbType.String);
+            dbPara.Add("LabelPosition", _design.LabelPosition, DbType.Int16);
+            dbPara.Add("Description", _design.Description, DbType.String);
+            dbPara.Add("Weight", _design.Weight, DbType.String);
+            dbPara.Add("UPC", _design.UPC, DbType.String);
+            dbPara.Add("CustomerItemCode", _design.CustomerItemCode, DbType.String);
+            dbPara.Add("Created", _design.Created, DbType.Date);
+            dbPara.Add("Update", _design.Updated, DbType.Date);
 
             var _designID = Task.FromResult(_dapperService.Insert<int>("dbo.usp_Design_Add", dbPara, commandType: CommandType.StoredProcedure));
 
@@ -75,12 +83,21 @@ namespace PrintShopDesigns.Data
             var dbPara = new DynamicParameters();
 
             dbPara.Add("DesignID", _design.DesignID, DbType.Int16);
+            dbPara.Add("KingDesignID", _design.KingDesignID, DbType.String);
             dbPara.Add("Item", _design.Item, DbType.String);
             dbPara.Add("Color", _design.Color, DbType.String);
-            dbPara.Add("Hold", _design.Hold, DbType.Binary);
+            dbPara.Add("Hold", _design.Hold, DbType.Boolean);
             dbPara.Add("Notes", _design.Notes, DbType.String);
+            dbPara.Add("Customer", _design.Customer, DbType.String);
+            dbPara.Add("LabelPosition", _design.LabelPosition, DbType.Int16);
+            dbPara.Add("Description", _design.Description, DbType.String);
+            dbPara.Add("Weight", _design.Weight, DbType.String);
+            dbPara.Add("UPC", _design.UPC, DbType.String);
+            dbPara.Add("CustomerItemCode", _design.CustomerItemCode, DbType.String);
+            dbPara.Add("Created", _design.Created, DbType.Date);
+            dbPara.Add("Updated", _design.Updated, DbType.Date);
 
-            var updateDesign = Task.FromResult(_dapperService.Update<int>("dbo.usp_Product_Update", dbPara, commandType: CommandType.StoredProcedure));
+            var updateDesign = Task.FromResult(_dapperService.Update<int>("dbo.usp_Design_Update", dbPara, commandType: CommandType.StoredProcedure));
 
             return updateDesign;
         }
