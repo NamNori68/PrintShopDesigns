@@ -29,13 +29,13 @@ namespace PrintShopDesigns.Data
             dbPara.Add("Hold", _design.Hold, DbType.Boolean);
             dbPara.Add("Notes", _design.Notes, DbType.String);
             dbPara.Add("Customer", _design.Customer, DbType.String);
-            dbPara.Add("LabelPosition", _design.LabelPosition, DbType.Int16);
+            dbPara.Add("LabelPosition", _design.LabelPosition, DbType.Int32);
             dbPara.Add("Description", _design.Description, DbType.String);
             dbPara.Add("Weight", _design.Weight, DbType.String);
             dbPara.Add("UPC", _design.UPC, DbType.String);
             dbPara.Add("CustomerItemCode", _design.CustomerItemCode, DbType.String);
             dbPara.Add("Created", _design.Created, DbType.Date);
-            dbPara.Add("Update", _design.Updated, DbType.Date);
+            dbPara.Add("Updated", _design.Updated, DbType.Date);
 
             var _designID = Task.FromResult(_dapperService.Insert<int>("dbo.usp_Design_Add", dbPara, commandType: CommandType.StoredProcedure));
 
@@ -46,7 +46,7 @@ namespace PrintShopDesigns.Data
         {
             var dbPara = new DynamicParameters();
 
-            dbPara.Add("DesignID", id, DbType.Int16);
+            dbPara.Add("DesignID", id, DbType.Int32);
 
             var _design = Task.FromResult(_dapperService.Get<Design>("dbo.usp_Design_GetByID", dbPara, commandType: CommandType.StoredProcedure));
 
@@ -64,7 +64,7 @@ namespace PrintShopDesigns.Data
         {
             var dbPara = new DynamicParameters();
 
-            dbPara.Add("DesignID", id, DbType.Int16);
+            dbPara.Add("DesignID", id, DbType.Int32);
 
             var deleteDesign = Task.FromResult(_dapperService.Execute("dbo.usp_Design_DeleteByID", dbPara, commandType: CommandType.StoredProcedure));
 
@@ -82,14 +82,14 @@ namespace PrintShopDesigns.Data
         {
             var dbPara = new DynamicParameters();
 
-            dbPara.Add("DesignID", _design.DesignID, DbType.Int16);
+            dbPara.Add("DesignID", _design.DesignID, DbType.Int32);
             dbPara.Add("KingDesignID", _design.KingDesignID, DbType.String);
             dbPara.Add("Item", _design.Item, DbType.String);
             dbPara.Add("Color", _design.Color, DbType.String);
             dbPara.Add("Hold", _design.Hold, DbType.Boolean);
             dbPara.Add("Notes", _design.Notes, DbType.String);
             dbPara.Add("Customer", _design.Customer, DbType.String);
-            dbPara.Add("LabelPosition", _design.LabelPosition, DbType.Int16);
+            dbPara.Add("LabelPosition", _design.LabelPosition, DbType.Int32);
             dbPara.Add("Description", _design.Description, DbType.String);
             dbPara.Add("Weight", _design.Weight, DbType.String);
             dbPara.Add("UPC", _design.UPC, DbType.String);

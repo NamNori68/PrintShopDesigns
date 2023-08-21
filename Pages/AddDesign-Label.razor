@@ -4,6 +4,7 @@
 @inject IProductService productService
 @inject ICustomerService customerService
 @inject iColorService colorService
+@inject iMachineService machineService
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 
 <h2>Add Label Design</h2>
@@ -32,8 +33,8 @@
                 <RadzenLabel Text="Hold" /><br />
                 <RadzenCheckBox @bind-Value=@_design.Hold></RadzenCheckBox>Yes/No<br /><br />
 
-                <RadzenLabel Text="Machine" /><br />
-                <RadzenDropDown Name="machine" Style="width: 400px" @bind-Value=@machineValue Data="@_machines"></RadzenDropDown><br />
+                <RadzenLabel Text="Machines" /><br />
+                <RadzenCheckBoxList Data="@_machines" @bind-Value=@_values TValue="int" TextProperty="MachineName" ValueProperty="MachineId" class="mb-5" />
             </RadzenCard>
         </RadzenColumn>
         <RadzenColumn Size="6">
@@ -89,7 +90,8 @@
 <br />
 <div class="form-group">
     <RadzenButton Click="@CreateDesign" Text="Save" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
-    <RadzenButton Click="@cancel" Text="Cancel" Icon="add_circle_outline" ButtonStyle="Radzen.ButtonStyle.Warning"></RadzenButton>
+    <RadzenButton Click="@cancel" Text="Cancel" Icon="add_circle_outline" ButtonStyle="Radzen.ButtonStyle.Warning"></RadzenButton>nbsp;nbsp;
+    <RadzenButton Click="@clone" Text="Clone" Icon="add_circle_outline" ButtonStyle="Radzen.ButtonStyle.Secondary"></RadzenButton>
 </div>
 
 @code {
@@ -97,10 +99,12 @@
     IList<Product>? _products;
     IList<Customer>? _customers;
     IList<Color> _colors;
-    IEnumerable<string>? _productNames;
-    IEnumerable<string>? _productColors;
-    IEnumerable<string>? _customerNames;
-    IEnumerable<string>? _machines;
+    IList<Machine> _machines;
+    IEnumerable<Int32> _values;
+    IEnumerable<string> _productNames;
+    IEnumerable<string> _productColors;
+    IEnumerable<string> _customerNames;
+    IEnumerable<Machine> _usedMachines;
 
     [Parameter]
     public int DesignID{ get; set; }
@@ -114,7 +118,6 @@
     string productValue = "Select Product";
     string customerValue = "Select Customer";
     string colorValue = "Select Color";
-    string machineValue = "Select Machine";
 
     protected override async Task OnInitializedAsync()
     {
@@ -130,6 +133,9 @@
         //Populate the Color List
         _colors = await colorService.ListAll();
         _productColors = _colors.Select(c => c.ColorName);
+
+        //Populate the possible Machines
+        _machines = await machineService.ListAll();
 
         // if designid is 0 then we're coming in to create a brand new design
         if (DesignID == 0)
@@ -159,6 +165,9 @@
                 IsHidden = false;
             }
         }
+
+        _usedMachines = await machineService.ListAllUsed(_design.DesignID);
+        _values = _usedMachines.Select(c => c.MachineId);
     }
 
     protected async Task CreateDesign()
@@ -168,10 +177,24 @@
         else
             await designService.Update(_design);
 
+        // First wipe out all machines that are used for this design
+        await machineService.Clear(_design.DesignID);
+
+        // now simply add the ones that are checked.  this way we don't screw with what may have been un-checked
+        foreach (int _machineId in _values)
+        {
+            await machineService.Add(_machineId, _design.DesignID);
+        }
+
         navigationManager.NavigateTo("/Designs");
     }
 
     void cancel()
+    {
+        navigationManager.NavigateTo("/Designs");
+    }
+
+    void clone()
     {
         navigationManager.NavigateTo("/Designs");
     }

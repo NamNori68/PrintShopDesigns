@@ -38,6 +38,8 @@ builder.Services.AddScoped<iDesignService, DesignService>();
 builder.Services.AddScoped<IDapperService, DapperService>();
 //Color Service
 builder.Services.AddScoped<iColorService, ColorService>();
+//Machine Service
+builder.Services.AddScoped<iMachineService, MachineService>();
 
 var app = builder.Build();
 
