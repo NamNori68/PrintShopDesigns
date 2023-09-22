@@ -62,6 +62,17 @@ namespace PrintShopDesigns.Data
             return _product;
         }
 
+        public Task<String> GetTypeByName(string name)
+        {
+            var dbPara = new DynamicParameters();
+
+            dbPara.Add("ProductName", name, DbType.String);
+
+            var _productType = Task.FromResult(_dapperService.Get<String>("dbo.usp_Product_GetTypeByName", dbPara, commandType: CommandType.StoredProcedure));
+
+            return _productType;
+        }
+
         /// <summary>
         /// Deletes the current Product from the database.
         /// </summary>

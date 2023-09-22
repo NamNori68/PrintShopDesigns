@@ -10,6 +10,7 @@ namespace PrintShopDesigns.Interfaces
         Task<int> Delete(int Id);
         Task<int> Update(Product product);
         Task<Product> GetById(int Id);
+        Task<String> GetTypeByName(string Name);
         Task<List<Product>> ListAll();
     }
 }

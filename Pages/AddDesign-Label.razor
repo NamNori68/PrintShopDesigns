@@ -24,8 +24,8 @@
     <RadzenRow>
         <RadzenColumn Size="6">
             <RadzenCard Style="height: 375px">
-                <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="Product"></RadzenText><br />
-                <RadzenDropDown Name="products" Style="width: 400px" @bind-Value=@_design.Item Data=@_productNames></RadzenDropDown><br /><br />
+                <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="@_productType"></RadzenText><br />
+                <RadzenDropDown Name="products" Style="width: 400px" @bind-Value=@_design.Item Data=@_productNames Change="@OnProductChosen"></RadzenDropDown><br /><br />
 
                 <RadzenLabel Text="Color" /><br />
                 <RadzenDropDown Name="color" Style="width: 400px" @bind-Value=@_design.Color Data="@_productColors"></RadzenDropDown><br /><br />
@@ -90,8 +90,8 @@
 <br />
 <div class="form-group">
     <RadzenButton Click="@CreateDesign" Text="Save" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
-    <RadzenButton Click="@cancel" Text="Cancel" Icon="add_circle_outline" ButtonStyle="Radzen.ButtonStyle.Warning"></RadzenButton>nbsp;nbsp;
-    <RadzenButton Click="@clone" Text="Clone" Icon="add_circle_outline" ButtonStyle="Radzen.ButtonStyle.Secondary"></RadzenButton>
+    <RadzenButton Click="@cancel" Text="Cancel" Icon="add_circle_outline" ButtonStyle="Radzen.ButtonStyle.Warning"></RadzenButton>
+    <RadzenButton Click="@clone" Text="Clone" Icon="add_circle_outline" ButtonStyle="Radzen.ButtonStyle.Secondary" Style="margin-left: 50px"></RadzenButton>
 </div>
 
 @code {
@@ -105,6 +105,7 @@
     IEnumerable<string> _productColors;
     IEnumerable<string> _customerNames;
     IEnumerable<Machine> _usedMachines;
+    string _productType;
 
     [Parameter]
     public int DesignID{ get; set; }
@@ -124,6 +125,7 @@
         //Populate the Product Section
         _products = await productService.ListAll();
         _productNames = _products.Select(c => c.ProductName);
+
         // if we select a product type that's a lid, then we auto-select "Topside" and hide the "Underside" option of the radio button in the Customer Section
 
         //Populate the Customer Section
@@ -142,6 +144,7 @@
         {
             _newDesign = true;
             _design = new Design();
+            _productType = "Product";
 
             _nextID = await designService.GetNextId();
             _design.KingDesignID = "L-" + _nextID.ToString() + "-A";
@@ -154,6 +157,7 @@
             _design = await designService.GetById(DesignID);
 
             createdLabel = DateOnly.FromDateTime(_design.Created).ToString();
+            _productType = "Product - " + await productService.GetTypeByName(_design.Item);
 
             if (_design.Updated.Year == 0001)
             {
@@ -197,5 +201,10 @@
     void clone()
     {
         navigationManager.NavigateTo("/Designs");
+    }
+
+    protected async Task OnProductChosen()
+    {
+        _productType = "Product - " + await productService.GetTypeByName(_design.Item);
     }
 }
