@@ -19,7 +19,14 @@ namespace PrintShopDesigns.Data
 
         public Task<List<Machine>> ListAll()
         {
-            var _machines = Task.FromResult(_dapperService.GetAll<Machine>("dbo.usp_Machines_GetAll", null, commandType: CommandType.StoredProcedure));
+            var _machines = Task.FromResult(_dapperService.GetAll<Machine>("dbo.usp_Machines_GetAll_Label", null, commandType: CommandType.StoredProcedure));
+
+            return _machines;
+        }
+
+        public Task<List<Machine>> ListAllLabel()
+        {
+            var _machines = Task.FromResult(_dapperService.GetAll<Machine>("dbo.usp_Machines_GetAll_Label", null, commandType: CommandType.StoredProcedure));
 
             return _machines;
         }

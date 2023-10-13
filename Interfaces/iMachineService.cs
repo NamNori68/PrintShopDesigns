@@ -7,6 +7,7 @@ namespace PrintShopDesigns.Interfaces
     public interface iMachineService
     {
         Task<List<Machine>> ListAll();
+        Task<List<Machine>> ListAllLabel();
 
         Task<List<Machine>> ListAllUsed(int Id);
 

@@ -9,5 +9,8 @@ namespace PrintShopDesigns.Entities
 
         [Required]
         public string MachineName { get; set; }
+        public string MachineProduct { get; set; }
+        public string MachineType { get; set; }
+
     }
 }

@@ -137,7 +137,9 @@
         _productColors = _colors.Select(c => c.ColorName);
 
         //Populate the possible Machines
-        _machines = await machineService.ListAll();
+        var _machinesTask = machineService.ListAllLabel();
+
+        _machines = await _machinesTask;
 
         // if designid is 0 then we're coming in to create a brand new design
         if (DesignID == 0)
@@ -158,6 +160,8 @@
 
             createdLabel = DateOnly.FromDateTime(_design.Created).ToString();
             _productType = "Product - " + await productService.GetTypeByName(_design.Item);
+
+            // if _productType == Lid, then disable Machine 9, elseif == Container, then disable Machines 8 and 10
 
             if (_design.Updated.Year == 0001)
             {
