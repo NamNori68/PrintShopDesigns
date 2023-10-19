@@ -17,6 +17,13 @@
                 SelectionMode="Radzen.DataGridSelectionMode.Single" @bind-Value=@selectedDesign GridLines="Radzen.DataGridGridLines.Horizontal"
                 Data="@_designs" TItem="Design" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset">
     <Columns>
+        <RadzenDataGridColumn TItem="Design" Property="Archived" Title="Archived" Width="75px" TextAlign="TextAlign.Center">
+            <Template Context="design">
+                <div style="text-align:center">
+                    <RadzenCheckBox @bind-Value="design.Archived" TValue="bool" TriState="false" ReadOnly="true" Name="Archived" />
+                </div>
+            </Template>
+        </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="Design" Property="KingDesignID" Title="Design ID" Width="125px">
             <EditTemplate Context="design">
                 <RadzenTextBox @bind-Value="design.KingDesignID" Style="width:100%; display: block" Name="Item" />
@@ -33,9 +40,9 @@
             </EditTemplate>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="Design" Property="Hold" Title="Hold" Width="50px">
-            <EditTemplate Context="design">
-                <RadzenCheckBox @bind-Value="design.Hold" Style="width:100%; display: block" Name="Hold" />
-            </EditTemplate>
+            <Template Context="design">
+                <RadzenCheckBox @bind-Value="design.Hold" ReadOnly="true" Name="Hold" />
+            </Template>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="Design" Property="Customer" Title="Customer" Width="160px">
             <EditTemplate Context="design">
