@@ -36,5 +36,7 @@ namespace PrintShopDesigns.Entities
 
         public DateTime Updated { get; set; }
 
+        public bool Archived { get; set; }
+
     }
 }

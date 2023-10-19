@@ -114,7 +114,7 @@
     private string createdLabel { get; set; }
     private string updatedLabel { get; set; }
     bool _newDesign;
-    string _nextID;
+    int _nextID;
     string _kingDesignID;
     string productValue = "Select Product";
     string customerValue = "Select Customer";
@@ -150,6 +150,7 @@
 
             _nextID = await designService.GetNextId();
             _design.KingDesignID = "L-" + _nextID.ToString() + "-A";
+            _design.Archived = false;
 
             createdLabel = DateOnly.FromDateTime(DateTime.Today).ToString();
             IsHidden = true;
@@ -180,13 +181,21 @@
 
     protected async Task CreateDesign()
     {
-        if (_newDesign)
-            await designService.Create(_design);
-        else
-            await designService.Update(_design);
+        var _newId = 0;
 
-        // First wipe out all machines that are used for this design
-        await machineService.Clear(_design.DesignID);
+        if (_newDesign)
+        {
+            await designService.Create(_design);
+            _newId = await designService.GetByKingId(_design.KingDesignID);
+
+            _design.DesignID = _newId;
+        }
+        else
+        {
+            await designService.Update(_design);
+            // First wipe out all machines that are used for this design
+            await machineService.Clear(_design.DesignID);
+        }
 
         // now simply add the ones that are checked.  this way we don't screw with what may have been un-checked
         foreach (int _machineId in _values)
@@ -202,8 +211,24 @@
         navigationManager.NavigateTo("/Designs");
     }
 
-    void clone()
+    protected async Task clone()
     {
+        // cannot clone an archived design.
+        if (!_design.Archived)
+        {
+            await designService.Clone(_design);
+
+            var _cloneId = await designService.GetByKingId(_design.KingDesignID);
+
+            _usedMachines = await machineService.ListAllUsed(_design.DesignID);
+            _values = _usedMachines.Select(c => c.MachineId);
+
+            foreach (int _machineId in _values)
+            {
+                await machineService.Add(_machineId, _cloneId);
+            }
+        }
+
         navigationManager.NavigateTo("/Designs");
     }
 
