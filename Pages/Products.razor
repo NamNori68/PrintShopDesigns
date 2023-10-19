@@ -46,9 +46,9 @@
             </EditTemplate>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="Product" Property="Archived" Title="Archived" Width="160px">
-            <EditTemplate Context="product">
+            <Template Context="product">
                 <RadzenCheckBox @bind-Value="product.Archived" Style="display: block" Name="Archived" />
-            </EditTemplate>
+            </Template>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="Product" Context="product" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
             <Template Context="product">
@@ -86,6 +86,7 @@
     protected override async Task OnInitializedAsync()
     {
         _products = await productService.ListAll();
+
     }
 
     void OnUpdateRow(Product _products)

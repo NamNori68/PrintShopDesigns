@@ -32,6 +32,9 @@ namespace PrintShopDesigns.Data
         /// <returns>The ID value of the newly created Product.</returns>
         public Task<int> Create(Product _product)
         {
+            _product.Created = DateTime.Today;
+            _product.Updated = DateTime.Today;
+
             var dbPara = new DynamicParameters();
 
             dbPara.Add("ProductName", _product.ProductName, DbType.String);
@@ -107,6 +110,8 @@ namespace PrintShopDesigns.Data
         /// <returns>The successfully completed update task.</returns>
         public Task<int> Update(Product _product)
         {
+            _product.Updated = DateTime.Today;
+
             var dbPara = new DynamicParameters();
 
             dbPara.Add("ProductID", _product.ProductID, DbType.Int16);

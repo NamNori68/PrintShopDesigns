@@ -4,39 +4,38 @@
 
 <h2>Add Product</h2>
 
-<div class="row">
-    <div class="col-md-4">
-        <form>
-            <div class="form-group">
-                <RadzenLabel Text="Product Name" Component="@_product.ProductName" />
-                <RadzenTextBox @bind-Value="_product.ProductName" Style="width:100%; display: block" Name="Name" />
-                <RadzenLabel Text="Type" Component="@_product.Type" />
-                <RadzenTextBox @bind-Value="_product.Type" Style="width:100%; display: block" Name="Type" />
-                <RadzenLabel Text="Description" Component="@_product.Description" />
-                <RadzenTextBox @bind-Value="_product.Description" Style="width:100%; display: block" Name="Description" />
-                <RadzenLabel Text="Date Created" /><br/>
-                <RadzenDatePicker @bind-Value="@_product.Created" DateFormat="d" /><br/>
-                <RadzenLabel Text="Date Updated" /><br />
-                <RadzenDatePicker @bind-Value="@_product.Updated" DateFormat="d" Name="Updated" /><br/>
-                <RadzenLabel Text="Archived" />
-                <RadzenCheckBox @bind-Value="_product.Archived" Name="Arvchived" />
-            </div>
-            <br />
-            <div class="form-group">
-                <RadzenButton Click="@CreateProduct" Text="Save" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
-                <RadzenButton Click="@cancel" Text="Cancel" Icon="add_circle_outline" ButtonStyle="Radzen.ButtonStyle.Warning"></RadzenButton>
-            </div>
-        </form>
-    </div>
+<RadzenStack Gap="1rem" Style="position: relative">
+    <RadzenRow>
+        <RadzenColumn Size="6" Style="text-align: left">     
+    
+                        <RadzenLabel Text="Product Name" Component="@_product.ProductName" />
+                        <RadzenTextBox @bind-Value="_product.ProductName" Style="width:100%; display: block" Name="Name" />
+                        <RadzenLabel Text="Type" Component="@_product.Type" />
+                        <RadzenTextBox @bind-Value="_product.Type" Style="width:100%; display: block" Name="Type" />
+                        <RadzenLabel Text="Description" Component="@_product.Description" />
+                        <RadzenTextBox @bind-Value="_product.Description" Style="width:100%; display: block" Name="Description" />
+                        <RadzenLabel Text="Archived" />
+                        <RadzenCheckBox @bind-Value="_product.Archived" Name="Arvchived" />
+                    </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>
+<br />
+<div class="form-group">
+    <RadzenButton Click="@CreateProduct" Text="Save" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+    <RadzenButton Click="@cancel" Text="Cancel" Icon="add_circle_outline" ButtonStyle="Radzen.ButtonStyle.Warning"></RadzenButton>
 </div>
 
 @code {
+    private bool IsHidden { get; set; }
+    private string createdLabel { get; set; }
+    private string updatedLabel { get; set; }
     Product _product = new Product();
 
     protected async Task CreateProduct()
     {
         await productService.Create(_product);
         navigationManager.NavigateTo("/Products");
+        IsHidden = true;
     }
 
     void cancel()
@@ -48,6 +47,5 @@
     {
         if (_archived is null) return;
         _product.Archived = Convert.ToBoolean(_archived);
-        
     }
 }
