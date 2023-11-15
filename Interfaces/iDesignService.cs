@@ -15,5 +15,7 @@ namespace PrintShopDesigns.Interfaces
         Task<int> GetByKingId(string KingId);
         Task<int> GetNextId();
         Task<List<Design>> ListAll();
+        Task<List<Design>> ListAllArchived();
+        Task<List<Design>> ListAllActive();
     }
 }

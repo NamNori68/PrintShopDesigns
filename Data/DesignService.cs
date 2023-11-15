@@ -154,6 +154,28 @@ namespace PrintShopDesigns.Data
         }
 
         /// <summary>
+        /// Returns a list of all Designs from the database.
+        /// </summary>
+        /// <returns></returns>
+        public Task<List<Design>> ListAllArchived()
+        {
+            var _design = Task.FromResult(_dapperService.GetAll<Design>("dbo.usp_Design_GetAll_Archived", null, commandType: CommandType.StoredProcedure));
+
+            return _design;
+        }
+
+        /// <summary>
+        /// Returns a list of all Designs from the database.
+        /// </summary>
+        /// <returns></returns>
+        public Task<List<Design>> ListAllActive()
+        {
+            var _design = Task.FromResult(_dapperService.GetAll<Design>("dbo.usp_Design_GetAll_Active", null, commandType: CommandType.StoredProcedure));
+
+            return _design;
+        }
+
+        /// <summary>
         /// Updates the current design in the database.
         /// </summary>
         /// <param name="_design">The current design which is being modified.</param>

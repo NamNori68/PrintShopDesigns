@@ -13,7 +13,8 @@
 <RadzenStack Gap="1rem" Style="position: relative">
     <RadzenRow>
         <RadzenColumn Size="6">
-            <label style="font-size: 16px">Design #: <strong>@(_design.KingDesignID)</strong></label>
+            <label style="font-size: 16px">Design #: <strong>@(_design.KingDesignID)</strong></label><br />
+            <label hidden="@IsArchiveHidden" style="font-size: 16px"><strong>ARCHIVED</strong></label>
         </RadzenColumn>
         <RadzenColumn Size="6" Style="text-align: right">
             <label style="font-size: 16px">Created: <strong>@(createdLabel)</strong></label><br/>
@@ -52,8 +53,8 @@
                 <RadzenLabel Text="Label Position" /><br /><br/>
                 <RadzenRadioButtonList TValue="int" @bind-Value=@_design.LabelPosition TextProperty="LabelPosition" Orientation="Radzen.Orientation.Horizontal">
                     <Items>
-                        <RadzenRadioButtonListItem Text="Topside" Value="1" />
-                        <RadzenRadioButtonListItem Text="Underside" Value="2" />
+                        <RadzenRadioButtonListItem Text="@_topSide" Value="1" />
+                        <RadzenRadioButtonListItem Text="@_underSide" Value="2" />
                     </Items>
                 </RadzenRadioButtonList><br />
                 <RadzenLabel Text="Description" /><br />
@@ -106,11 +107,14 @@
     IEnumerable<string> _customerNames;
     IEnumerable<Machine> _usedMachines;
     string _productType;
+    string _topSide;
+    string _underSide;
 
     [Parameter]
     public int DesignID{ get; set; }
 
     private bool IsHidden { get; set; }
+    private bool IsArchiveHidden { get; set; }
     private string createdLabel { get; set; }
     private string updatedLabel { get; set; }
     bool _newDesign;
@@ -141,6 +145,8 @@
 
         _machines = await _machinesTask;
 
+        IsArchiveHidden = true;
+
         // if designid is 0 then we're coming in to create a brand new design
         if (DesignID == 0)
         {
@@ -154,7 +160,6 @@
 
             createdLabel = DateOnly.FromDateTime(DateTime.Today).ToString();
             IsHidden = true;
-
         } else { // else we have a designid passed in as a page parameter, so we get that design in order to populate the page
             _newDesign = false;
             _design = await designService.GetById(DesignID);
@@ -163,6 +168,8 @@
             _productType = "Product - " + await productService.GetTypeByName(_design.Item);
 
             // if _productType == Lid, then disable Machine 9, elseif == Container, then disable Machines 8 and 10
+            // also if _productType == Lid, then Label Position should only show Topside/Underside; elseif Container, then FrontSide/Backside
+            SetLabels(_productType);
 
             if (_design.Updated.Year == 0001)
             {
@@ -173,6 +180,9 @@
                 updatedLabel = DateOnly.FromDateTime(_design.Updated).ToString();
                 IsHidden = false;
             }
+
+            if (_design.Archived == true)
+                IsArchiveHidden = false;
         }
 
         _usedMachines = await machineService.ListAllUsed(_design.DesignID);
@@ -235,5 +245,28 @@
     protected async Task OnProductChosen()
     {
         _productType = "Product - " + await productService.GetTypeByName(_design.Item);
+
+        SetLabels(_productType);
+    }
+
+    private void SetLabels(string _type)
+    {
+        if (_type.Substring(10, 3) == "Lid")
+        {
+            // disable Machine 9 since it doesn't involve lids
+
+            // label position only "Topside/Underside"
+            _topSide = "Topside";
+            _underSide = "Underside";
+        }
+        else
+        {
+            // disable machines 8 and 10 since they don't involve containers
+
+            // label position only "FrontSide/Backside"
+            _topSide = "Frontside";
+            _underSide = "Backside";
+        }
+       
     }
 }

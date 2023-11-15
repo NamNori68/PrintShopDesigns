@@ -86,7 +86,6 @@
     protected override async Task OnInitializedAsync()
     {
         _products = await productService.ListAll();
-
     }
 
     void OnUpdateRow(Product _products)

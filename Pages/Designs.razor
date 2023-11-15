@@ -84,7 +84,7 @@
 
         protected override async Task OnInitializedAsync()
         {
-            _designs = await designService.ListAll();
+            _designs = await designService.ListAllActive();
         }
 
         void OnUpdateRow(Design _designs)
