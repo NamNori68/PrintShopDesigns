@@ -1,5 +1,5 @@
-@page "/addDesign-Label"
-@page "/addDesign-Label/{DesignID:int}"
+﻿@page "/addDesign-Print"
+@page "/addDesign-Print/{DesignID:int}"
 @inject iDesignService designService
 @inject IProductService productService
 @inject ICustomerService customerService
@@ -7,7 +7,7 @@
 @inject iMachineService machineService
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 
-<h2>Add Label Design</h2>
+<h2>Add Print Design</h2>
 <hr />
 
 <RadzenStack Gap="1rem" Style="position: relative">
@@ -17,7 +17,7 @@
             <label hidden="@IsArchiveHidden" style="font-size: 16px"><strong>ARCHIVED</strong></label>
         </RadzenColumn>
         <RadzenColumn Size="6" Style="text-align: right">
-            <label style="font-size: 16px">Created: <strong>@(createdLabel)</strong></label><br/>
+            <label style="font-size: 16px">Created: <strong>@(createdLabel)</strong></label><br />
             <label hidden="@IsHidden" style="font-size: 16px">Updated: <strong>@(updatedLabel)</strong></label>
         </RadzenColumn>
     </RadzenRow>
@@ -50,7 +50,7 @@
         <RadzenColumn Size="12">
             <RadzenCard>
                 <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="Design Details"></RadzenText><br />
-                <RadzenLabel Text="Label Position" /><br /><br/>
+                <RadzenLabel Text="Label Position" /><br /><br />
                 <RadzenRadioButtonList TValue="int" @bind-Value=@_design.LabelPosition TextProperty="LabelPosition" Orientation="Radzen.Orientation.Horizontal">
                     <Items>
                         <RadzenRadioButtonListItem Text="@_topSide" Value="1" />
@@ -111,7 +111,7 @@
     string _underSide;
 
     [Parameter]
-    public int DesignID{ get; set; }
+    public int DesignID { get; set; }
 
     private bool IsHidden { get; set; }
     private bool IsArchiveHidden { get; set; }
@@ -160,7 +160,9 @@
 
             createdLabel = DateOnly.FromDateTime(DateTime.Today).ToString();
             IsHidden = true;
-        } else { // else we have a designid passed in as a page parameter, so we get that design in order to populate the page
+        }
+        else
+        { // else we have a designid passed in as a page parameter, so we get that design in order to populate the page
             _newDesign = false;
             _design = await designService.GetById(DesignID);
 
@@ -265,6 +267,6 @@
             _topSide = "Frontside";
             _underSide = "Backside";
         }
-       
+
     }
 }

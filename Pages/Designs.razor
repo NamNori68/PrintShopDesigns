@@ -68,69 +68,84 @@
     </Columns>
 </RadzenDataGrid>
 
+<br/>
 
-    @code {
-        RadzenDataGrid<Design>? designsGrid;
-        IList<Design>? _designs;
-        IList<Design>? selectedDesign;
-        Design designToInsert;
-        Design designToUpdate;
+<div>
+    <RadzenCheckBox TriState="false" TValue="bool" @bind-Value="showArchiveValue" Name="ShowArchive" Change=@ShowArchiveChanged></RadzenCheckBox>
+    <RadzenLabel Text="Show Archived Designs" Component="ShowArchive"></RadzenLabel>
+</div>
 
-        void Reset()
+@code {
+    RadzenDataGrid<Design> designsGrid;
+    IList<Design> _designs;
+    IList<Design> selectedDesign;
+    Design designToInsert;
+    Design designToUpdate;
+    bool showArchiveValue;
+
+    void Reset()
+    {
+        designToInsert = null;
+        designToUpdate = null;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        showArchiveValue = false;
+
+        _designs = await designService.ListAllActive();
+    }
+
+    void OnUpdateRow(Design _designs)
+    {
+        if (_designs == designToInsert)
         {
             designToInsert = null;
-            designToUpdate = null;
         }
 
-        protected override async Task OnInitializedAsync()
+        designToUpdate = null;
+
+        designService.Update(_designs);
+    }
+
+    async Task SaveRow(Design _designs)
+    {
+        await designsGrid.UpdateRow(_designs);
+    }
+
+    protected async Task EditRow(Design _designs)
+    {
+        // TODO depends on if this row is Label or Print
+        navigationManager.NavigateTo("/AddDesign-Label/" + _designs.DesignID);
+    }
+
+    /// <summary>
+    /// Deletes a row out of the Designs data grid, then reloads all active (unarchived) Designs
+    /// </summary>
+    /// <param name="id">The Design ID of the design being deleted</param>
+    /// <returns>Asynchronous Task</returns>
+    protected async Task DeleteRow(int id)
+    {
+        await designService.Delete(id);
+        _designs = await designService.ListAllActive();
+    }
+
+    void CancelEdit(Design _designs)
+    {
+        if (_designs == designToInsert)
         {
-            _designs = await designService.ListAllActive();
+            designToInsert = null;
         }
 
-        void OnUpdateRow(Design _designs)
-        {
-            if (_designs == designToInsert)
-            {
-                designToInsert = null;
-            }
+        designToUpdate = null;
 
-            designToUpdate = null;
+        designsGrid.CancelEditRow(_designs);
+    }
 
-            designService.Update(_designs);
-        }
-
-        async Task SaveRow(Design _designs)
-        {
-            await designsGrid.UpdateRow(_designs);
-        }
-
-        protected async Task EditRow(Design _designs)
-        {
-           navigationManager.NavigateTo("/AddDesign-Label/" + _designs.DesignID);
-        }
-
-        protected async Task DeleteRow(int id)
-        {
-            await designService.Delete(id);
-            _designs = await designService.ListAll();
-        }
-
-        void CancelEdit(Design _designs)
-        {
-            if (_designs == designToInsert)
-            {
-                designToInsert = null;
-            }
-
-            designToUpdate = null;
-
-            designsGrid.CancelEditRow(_designs);
-        }
-
-        void OnCreateRow(Design _customer)
-        {
-            designService.Create(_customer);
-        }
+    void OnCreateRow(Design _customer)
+    {
+        designService.Create(_customer);
+    }
 
     void AddLabelDesignClicked()
     {
@@ -140,5 +155,17 @@
     void AddPrintDesignClicked()
     {
         navigationManager.NavigateTo("/AddDesign-Print");
+    }
+
+    protected async Task ShowArchiveChanged(bool value)
+    {
+        if (value == true)
+        {
+            _designs = await designService.ListAll();
+        }
+        else
+        {
+            _designs = await designService.ListAllActive();
+        }
     }
 }
