@@ -31,6 +31,13 @@ namespace PrintShopDesigns.Data
             return _machines;
         }
 
+        public Task<List<Machine>> ListAllPrint()
+        {
+            var _machines = Task.FromResult(_dapperService.GetAll<Machine>("dbo.usp_Machines_GetAll_Print", null, commandType: CommandType.StoredProcedure));
+
+            return _machines;
+        }
+
         public Task<List<Machine>> ListAllUsed(int _designId)
         {
             var dbPara = new DynamicParameters();

@@ -2,12 +2,15 @@
 
 @using DevExpress.Blazor.Reporting
 @using DevExpress.XtraReports.UI
+@using DevExpress.XtraReports.Parameters;
+@using DevExpress.XtraReports.Expressions;
 @using PrintShopDesigns.Reports
+@using System;
 
 <link href="_content/DevExpress.Blazor.Themes/bootstrap-external.bs5.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="_content/DevExpress.Blazor.Reporting.Viewer/css/dx-blazor-reporting-components.bs5.css" />
+<link rel="stylesheet" href="_content/DevExpress.Blazor.Reporting.Viewer/css/dx-blazor-reporting-components.css">
 
-<DxReportViewer @ref="reportViewer" Report="Report" RootCssClasses="w-100 h-100" />
+<DxReportViewer @ref="reportViewer" Report="Report" RootCssClasses="w-100 h-500" />
 
 @code {
     DxReportViewer reportViewer;

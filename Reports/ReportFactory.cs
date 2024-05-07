@@ -6,7 +6,8 @@ namespace PrintShopDesigns.Reports
         {
             public static Dictionary<string, Func<XtraReport>> Reports = new Dictionary<string, Func<XtraReport>>()
             {
-                ["MaterialsReport"] = () => new MaterialsReport()
+                ["MaterialsReport"] = () => new MaterialsReport(),
+                ["PrintLabelReport"] = () => new PrintLabelReport()
             };
         }
 }

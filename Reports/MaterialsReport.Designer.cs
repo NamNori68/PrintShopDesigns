@@ -124,7 +124,7 @@
             this.xrLabel1.Multiline = true;
             this.xrLabel1.Name = "xrLabel1";
             this.xrLabel1.Padding = new DevExpress.XtraPrinting.PaddingInfo(2, 2, 0, 0, 100F);
-            this.xrLabel1.SizeF = new System.Drawing.SizeF(150.0801F, 25F);
+            this.xrLabel1.SizeF = new System.Drawing.SizeF(138.6218F, 25F);
             this.xrLabel1.StylePriority.UseFont = false;
             this.xrLabel1.StylePriority.UsePadding = false;
             this.xrLabel1.StylePriority.UseTextAlignment = false;
@@ -138,7 +138,7 @@
             this.xrLabel2.Multiline = true;
             this.xrLabel2.Name = "xrLabel2";
             this.xrLabel2.Padding = new DevExpress.XtraPrinting.PaddingInfo(2, 2, 0, 0, 100F);
-            this.xrLabel2.SizeF = new System.Drawing.SizeF(88.38139F, 25F);
+            this.xrLabel2.SizeF = new System.Drawing.SizeF(77.96474F, 25F);
             this.xrLabel2.StylePriority.UseFont = false;
             this.xrLabel2.StylePriority.UsePadding = false;
             this.xrLabel2.StylePriority.UseTextAlignment = false;
@@ -152,7 +152,7 @@
             this.xrLabel3.Multiline = true;
             this.xrLabel3.Name = "xrLabel3";
             this.xrLabel3.Padding = new DevExpress.XtraPrinting.PaddingInfo(2, 2, 0, 0, 100F);
-            this.xrLabel3.SizeF = new System.Drawing.SizeF(123.8248F, 25F);
+            this.xrLabel3.SizeF = new System.Drawing.SizeF(112.3665F, 25F);
             this.xrLabel3.StylePriority.UseFont = false;
             this.xrLabel3.StylePriority.UsePadding = false;
             this.xrLabel3.StylePriority.UseTextAlignment = false;
@@ -253,7 +253,7 @@
             this.DataMember = "usp_Material_GetAll";
             this.DataSource = this.sqlDataSource1;
             this.Margins = new DevExpress.Drawing.DXMargins(100F, 100F, 195.8333F, 100F);
-            this.Version = "22.2";
+            this.Version = "23.2";
             ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
 
         }

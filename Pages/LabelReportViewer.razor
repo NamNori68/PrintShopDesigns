@@ -1,0 +1,84 @@
+﻿@page "/LabelReportViewer"
+@page "/LabelReportViewer/{DesignID:int}"
+
+@using DevExpress.Blazor.Reporting
+@using DevExpress.XtraReports
+@using PrintShopDesigns.Reports
+@using DevExpress.DataAccess.Sql;
+@using DevExpress.DataAccess.ConnectionParameters;
+
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+
+<link href="_content/DevExpress.Blazor.Themes/blazing-berry.bs5.css" rel="stylesheet" />
+<link rel="stylesheet" href="_content/DevExpress.Blazor.Reporting.Viewer/css/dx-blazor-reporting-components.bs5.css">
+
+<h3>Labeled Design Report</h3>
+
+<DxReportViewer @ref="labelReportViewer" Report="@Report"></DxReportViewer>
+
+<br/>
+<br/>
+
+<RadzenButton Click="@close" Text="Close" Icon="highlight_off" ButtonStyle="Radzen.ButtonStyle.Primary"></RadzenButton>
+
+
+@code {
+    [Parameter]
+    public int DesignID { get; set; }
+    DxReportViewer labelReportViewer;
+    string paramName = "DesignID";
+    IReport Report;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var _ds = new SqlDataSource
+            {
+                Name = "_ds",
+                ConnectionName = "PrintShopDB"
+            };
+
+        var connectionParameters = new MsSqlConnectionParameters()
+            {
+                ServerName = "tcp:printshopdesign.database.windows.net,1433",
+                DatabaseName = "PrintShopDesignDB",
+                AuthorizationType = MsSqlAuthorizationType.SqlServer,
+                UserName = "Verwalter",
+                Password = "r88b45Xl"
+            };
+
+        _ds.ConnectionParameters = connectionParameters;
+        var queryName = "bohica";
+
+        var storedProcedureQuery = new StoredProcQuery()
+            {
+                Name = queryName,
+                StoredProcName = "rpt_LabelDesignByID"
+            };
+
+        _ds.Queries.Add(storedProcedureQuery);
+
+        var queryParameter = new QueryParameter()
+            {
+                Name = "@DesignID",
+                Type = typeof(DevExpress.DataAccess.Expression),
+                Value = new DevExpress.DataAccess.Expression("?DesignID", typeof(int))
+            };
+
+        storedProcedureQuery.Parameters.Add(queryParameter);
+
+        var report = new PrintLabelReport();
+        report.DataSource = _ds;
+        report.DataMember = queryName;
+
+        report.Parameters["DesignID"].Value = DesignID;
+        report.RequestParameters = false;
+
+        report.CreateDocument();
+        Report = report;
+    }
+
+    void close()
+    {
+        navigationManager.NavigateTo("/AddDesign-Label/" + DesignID);
+    }
+}

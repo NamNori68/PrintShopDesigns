@@ -141,7 +141,7 @@
         _productColors = _colors.Select(c => c.ColorName);
 
         //Populate the possible Machines
-        var _machinesTask = await machineService.ListAllLabel();
+        var _machinesTask = await machineService.ListAllPrint();
 
         _machines = _machinesTask;
 
@@ -155,7 +155,7 @@
             _productType = "Product";
 
             _nextID = await designService.GetNextId();
-            _design.KingDesignID = "L-" + _nextID.ToString() + "-A";
+            _design.KingDesignID = _nextID.ToString() + "-A";
             _design.Archived = false;
 
             createdLabel = DateOnly.FromDateTime(DateTime.Today).ToString();

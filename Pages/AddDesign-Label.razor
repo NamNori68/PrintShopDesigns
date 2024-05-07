@@ -12,11 +12,13 @@
 
 <RadzenStack Gap="1rem" Style="position: relative">
     <RadzenRow>
-        <RadzenColumn Size="6">
+        <RadzenColumn Size="4">
             <label style="font-size: 16px">Design #: <strong>@(_design.KingDesignID)</strong></label><br />
-            <label hidden="@IsArchiveHidden" style="font-size: 16px"><strong>ARCHIVED</strong></label>
         </RadzenColumn>
-        <RadzenColumn Size="6" Style="text-align: right">
+        <RadzenColumn Size="4" Style="text-align: center">
+            <label hidden="@IsArchiveHidden" style="font-size: 20px; color: red;"><strong>ARCHIVED</strong></label>
+        </RadzenColumn>
+        <RadzenColumn Size="4" Style="text-align: right">
             <label style="font-size: 16px">Created: <strong>@(createdLabel)</strong></label><br/>
             <label hidden="@IsHidden" style="font-size: 16px">Updated: <strong>@(updatedLabel)</strong></label>
         </RadzenColumn>
@@ -91,8 +93,9 @@
 <br />
 <div class="form-group">
     <RadzenButton Click="@CreateDesign" Text="Save" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
-    <RadzenButton Click="@cancel" Text="Cancel" Icon="add_circle_outline" ButtonStyle="Radzen.ButtonStyle.Warning"></RadzenButton>
-    <RadzenButton Click="@clone" Text="Clone" Icon="add_circle_outline" ButtonStyle="Radzen.ButtonStyle.Secondary" Style="margin-left: 50px"></RadzenButton>
+    <RadzenButton Click="@cancel" Text="Cancel" Icon="highlight_off" ButtonStyle="Radzen.ButtonStyle.Warning"></RadzenButton>
+    <RadzenButton Click="@clone" Text="Clone" Icon="cached" ButtonStyle="Radzen.ButtonStyle.Secondary" Style="margin-left: 50px"></RadzenButton>
+    <RadzenButton Click="@print" hidden="@IsArchived" Text="Print" Icon="assessment" ButtonStyle="Radzen.ButtonStyle.Info" Style="margin-left: 25px"></RadzenButton>
 </div>
 
 @code {
@@ -115,6 +118,7 @@
 
     private bool IsHidden { get; set; }
     private bool IsArchiveHidden { get; set; }
+    private bool IsArchived { get; set; }
     private string createdLabel { get; set; }
     private string updatedLabel { get; set; }
     bool _newDesign;
@@ -141,11 +145,12 @@
         _productColors = _colors.Select(c => c.ColorName);
 
         //Populate the possible Machines
-        var _machinesTask = await machineService.ListAllLabel();
+        var _machinesTask = await machineService.ListAllPrint();
 
         _machines = _machinesTask;
 
         IsArchiveHidden = true;
+        IsArchived = false;
 
         // if designid is 0 then we're coming in to create a brand new design
         if (DesignID == 0)
@@ -181,6 +186,7 @@
 
             if (_design.Archived == true)
                 IsArchiveHidden = false;
+                IsArchived = true;
         }
 
         _usedMachines = await machineService.ListAllUsed(_design.DesignID);
@@ -238,6 +244,11 @@
         }
 
         navigationManager.NavigateTo("/Designs");
+    }
+
+    protected async Task print()
+    {
+        navigationManager.NavigateTo("/LabelReportViewer/" + DesignID);
     }
 
     protected async Task OnProductChosen()
