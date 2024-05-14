@@ -41,6 +41,7 @@ namespace PrintShopDesigns.Data
             dbPara.Add("Created", _design.Created, DbType.Date);
             dbPara.Add("Updated", _design.Updated, DbType.Date);
             dbPara.Add("Archived", _design.Archived, DbType.Boolean);
+            dbPara.Add("Type", _design.Type, DbType.String);
 
             var _designID = Task.FromResult(_dapperService.Insert<int>("dbo.usp_Design_Add", dbPara, commandType: CommandType.StoredProcedure));
 
@@ -70,6 +71,7 @@ namespace PrintShopDesigns.Data
             dbPara.Add("Created", _design.Created, DbType.Date);
             dbPara.Add("Updated", _design.Updated, DbType.Date);
             dbPara.Add("Archived", _design.Archived, DbType.Boolean);
+            dbPara.Add("Type", _design.Type, DbType.String);
 
             var updateOriginal = Task.FromResult(_dapperService.Update<int>("dbo.usp_Design_Update", dbPara, commandType: CommandType.StoredProcedure));
 
@@ -98,6 +100,7 @@ namespace PrintShopDesigns.Data
             dbPara2.Add("Created", _design.Created, DbType.Date);
             dbPara2.Add("Updated", _design.Updated, DbType.Date);
             dbPara2.Add("Archived", _design.Archived, DbType.Boolean);
+            dbPara.Add("Type", _design.Type, DbType.String);
 
             var _cloneDesignID = Task.FromResult(_dapperService.Insert<int>("dbo.usp_Design_Add", dbPara2, commandType: CommandType.StoredProcedure));
 
@@ -201,6 +204,7 @@ namespace PrintShopDesigns.Data
             dbPara.Add("Created", _design.Created, DbType.Date);
             dbPara.Add("Updated", _design.Updated, DbType.Date);
             dbPara.Add("Archived", _design.Archived, DbType.Boolean);
+            dbPara.Add("Type", _design.Type, DbType.String);
 
             var updateDesign = Task.FromResult(_dapperService.Update<int>("dbo.usp_Design_Update", dbPara, commandType: CommandType.StoredProcedure));
 

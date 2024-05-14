@@ -24,6 +24,11 @@
                 </div>
             </Template>
         </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Design" Property="Type" Title="Type" Width="75px">
+            <EditTemplate Context="design">
+                <RadzenTextBox @bind-Value="design.Type" Style="width:100%; display: block" Name="Item" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="Design" Property="KingDesignID" Title="Design ID" Width="125px">
             <EditTemplate Context="design">
                 <RadzenTextBox @bind-Value="design.KingDesignID" Style="width:100%; display: block" Name="Item" />
@@ -115,8 +120,15 @@
 
     protected async Task EditRow(Design _designs)
     {
-        // TODO depends on if this row is Label or Print
-        navigationManager.NavigateTo("/AddDesign-Label/" + _designs.DesignID);
+        if (_designs.Type == "L")
+        {
+            navigationManager.NavigateTo("/AddDesign-Label/" + _designs.DesignID);
+        } 
+        else
+        {
+            navigationManager.NavigateTo("/AddDesign-Print/" + _designs.DesignID);
+        }
+
     }
 
     /// <summary>

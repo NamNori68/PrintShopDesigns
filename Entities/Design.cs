@@ -38,5 +38,7 @@ namespace PrintShopDesigns.Entities
 
         public bool Archived { get; set; }
 
+        public string Type { get; set; }
+
     }
 }

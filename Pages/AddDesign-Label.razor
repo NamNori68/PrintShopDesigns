@@ -186,7 +186,7 @@
 
             if (_design.Archived == true)
                 IsArchiveHidden = false;
-                IsArchived = true;
+            IsArchived = true;
         }
 
         _usedMachines = await machineService.ListAllUsed(_design.DesignID);
@@ -199,6 +199,7 @@
 
         if (_newDesign)
         {
+            _design.Type = "L";
             await designService.Create(_design);
             _newId = await designService.GetByKingId(_design.KingDesignID);
 

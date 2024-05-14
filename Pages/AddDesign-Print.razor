@@ -258,6 +258,7 @@
 
         if (_newDesign)
         {
+            _design.Type = "P";
             await designService.Create(_design);
             _newId = await designService.GetByKingId(_design.KingDesignID);
 
