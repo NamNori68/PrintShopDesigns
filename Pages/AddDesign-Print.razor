@@ -5,6 +5,7 @@
 @inject ICustomerService customerService
 @inject iColorService colorService
 @inject iMachineService machineService
+@inject iColorPlateService _colorPlateService
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 
 <h2>Add Print Design</h2>
@@ -47,8 +48,8 @@
     </RadzenRow>
 
     <RadzenRow>
-        <RadzenColumn Size="12">
-            <RadzenCard>
+        <RadzenColumn Size="6">
+            <RadzenCard Style="height: 300px">
                 <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="Design Details"></RadzenText><br />
                 <RadzenLabel Text="Label Position" /><br /><br />
                 <RadzenRadioButtonList TValue="int" @bind-Value=@_design.LabelPosition TextProperty="LabelPosition" Orientation="Radzen.Orientation.Horizontal">
@@ -58,7 +59,7 @@
                     </Items>
                 </RadzenRadioButtonList><br />
                 <RadzenLabel Text="Description" /><br />
-                <RadzenTextBox Style="width: 900px" @bind-Value="_design.Description"></RadzenTextBox><br /><br />
+                <RadzenTextBox Style="width: 100%" @bind-Value="_design.Description"></RadzenTextBox><br /><br />
                 <table width="100%">
                     <tr>
                         <td>
@@ -72,6 +73,56 @@
                         <td align="right">
                             <RadzenLabel Text="Customer Item Code" /><br />
                             <RadzenTextBox @bind-Value="_design.CustomerItemCode"></RadzenTextBox>
+                        </td>
+                    </tr>
+                </table>
+            </RadzenCard>
+        </RadzenColumn>
+        <RadzenColumn Size="6">
+            <RadzenCard Style="height: 300px">
+                <RadzenText TextStyle="Radzen.Blazor.TextStyle.Subtitle1" TagName="Radzen.Blazor.TagName.H1" Text="Color Plates"></RadzenText><br />
+                <RadzenButton Click="@AddColorPlate" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+                <RadzenDataGrid @ref="_colorPlateGrid" Data="@_colorPlates" TItem="ColorPlate" GridLines="Radzen.DataGridGridLines.Horizontal" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow"  EditMode="@_editMode">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="ColorPlate" Property="Color" Title="Color" Width="125px">
+                            <EditTemplate Context="_colorPlates">
+                                <RadzenTextBox @bind-Value="_colorPlates.Color" Style="width:100%; display: block" Name="Color" />
+                            </EditTemplate>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="ColorPlate" Property="Spec" Title="Spec" Width="125px">
+                            <EditTemplate Context="_colorPlates">
+                                <RadzenTextBox @bind-Value="_colorPlates.Spec" Style="width:100%; display: block" Name="Spec" />
+                            </EditTemplate>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="ColorPlate" Property="Common" Title="Common" Width="125px">
+                            <EditTemplate Context="_colorPlates">
+                                <RadzenCheckBox @bind-Value="_colorPlates.Common" Name="Common" />
+                            </EditTemplate>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn Context="_colorPlates" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
+                            <Template Context="_colorPlates">
+                                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(_colorPlates))" @onclick:stopPropagation="true" />
+                                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Shade="Shade.Lighter" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => DeleteRow(_colorPlates.ColorPlateID))" @onclick:stopPropagation="true" />
+                            </Template>
+                            <EditTemplate Context="_colorPlates">
+                                <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Small" Click="@((args) => SaveRow(_colorPlates))" />
+                                <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Small" Class="my-1 ms-1" Click="@((args) => CancelEdit(_colorPlates))" />
+                                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Small" Class="my-1 ms-1" Click="@(args => DeleteRow(_colorPlates.ColorPlateID))" />
+                            </EditTemplate>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+                <br/>
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <RadzenLabel Text="Total Plates:  3"></RadzenLabel>
+                        </td>
+                        <td>
+                            <RadzenLabel Text="Original Date:  10/11/2024"></RadzenLabel>
+                        </td>
+                        <td>
+                            <RadzenLabel Text="Revised Date: -"></RadzenLabel>
                         </td>
                     </tr>
                 </table>
@@ -101,11 +152,21 @@
     IList<Customer>? _customers;
     IList<Color> _colors;
     IList<Machine> _machines;
+    IList<ColorPlate> _colorPlates;
+
     IEnumerable<Int32> _values;
     IEnumerable<string> _productNames;
     IEnumerable<string> _productColors;
     IEnumerable<string> _customerNames;
     IEnumerable<Machine> _usedMachines;
+
+    RadzenDataGrid<ColorPlate>? _colorPlateGrid;
+
+    Radzen.DataGridEditMode _editMode = Radzen.DataGridEditMode.Single;
+
+    ColorPlate _colorPlatesToInsert = new ColorPlate();
+    ColorPlate _colorPlatesToUpdate = new ColorPlate();
+
     string _productType;
     string _topSide;
     string _underSide;
@@ -187,6 +248,8 @@
 
         _usedMachines = await machineService.ListAllUsed(_design.DesignID);
         _values = _usedMachines.Select(c => c.MachineId);
+
+        _colorPlates = await _colorPlateService.ListAllbyDesignID(_design.DesignID);
     }
 
     protected async Task CreateDesign()
@@ -215,6 +278,19 @@
 
         navigationManager.NavigateTo("/Designs");
     }
+
+    protected async Task AddColorPlate()
+    {
+        if (_editMode == Radzen.DataGridEditMode.Single)
+        {
+            //Reset();
+        }
+
+        var colorPlate = new ColorPlate();
+        //_colorPlatesToInsert.Add(colorPlate);
+        await _colorPlateGrid.InsertRow(colorPlate);
+    }
+
 
     void cancel()
     {
@@ -267,6 +343,51 @@
             _topSide = "Frontside";
             _underSide = "Backside";
         }
+    }
 
+    void OnCreateRow(ColorPlate colorPlates)
+    {
+        _colorPlateService.Add(colorPlates, DesignID);
+    }
+
+    void OnUpdateRow(ColorPlate _colorPlate)
+    {
+        if (_colorPlate == _colorPlatesToInsert)
+        {
+            _colorPlatesToInsert = null;
+        }
+
+        _colorPlatesToUpdate = null;
+
+        _colorPlateService.Update(_colorPlate);
+    }
+
+    protected async Task EditRow(ColorPlate _colorPlate)
+    {
+        _colorPlatesToUpdate = _colorPlate;
+        await _colorPlateGrid.EditRow(_colorPlate);
+    }
+
+    async Task DeleteRow(int id)
+    {
+        await _colorPlateService.Delete(id);
+        _colorPlates = await _colorPlateService.ListAllbyDesignID(DesignID);
+    }
+
+    async Task SaveRow(ColorPlate _colorPlate)
+    {
+        await _colorPlateGrid.UpdateRow(_colorPlate);
+    }
+
+    void CancelEdit(ColorPlate _colorPlate)
+    {
+        if (_colorPlate == _colorPlatesToInsert)
+        {
+            _colorPlatesToInsert = null;
+        }
+
+        _colorPlatesToUpdate = null;
+
+        _colorPlateGrid.CancelEditRow(_colorPlate);
     }
 }
